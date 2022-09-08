@@ -62,6 +62,7 @@ client.on("messageCreate", msg => {
   }
 });
 
+// poll array
 let pollArr = [];
 // message react logger
 
