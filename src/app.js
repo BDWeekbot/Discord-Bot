@@ -4,7 +4,8 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
   );
 
 // load .env for keys
-require("dotenv").config({path:"../.env"});
+require("dotenv").config();
+// if run from src folder require("dotenv").config({path:"../.env"})
 
 
 // connection confirmation
@@ -42,6 +43,8 @@ client.on("messageCreate", msg => {
 
 // Ping Derek on week suggestions
 client.on("messageCreate", msg => {
+  const msgArray = msg.content.split(" ");
+
   if (!msg.channel.name === "week-name") return;
   if (msgArray[msgArray.length - 1].toLowerCase() === "week"){
    msg.channel.send(`mmm YES! ${msg.content} sounds like a wonderful week name doesnt it <@108420414635540480>!`)
@@ -49,6 +52,7 @@ client.on("messageCreate", msg => {
 });
 
 // access token
+
 let token = process.env.token;
 client.login(token);
 
