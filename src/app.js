@@ -1,6 +1,7 @@
 // load discord.js
-const {Client, Collection, GatewayIntentBits, messageLink, CommandInteractionOptionResolver} = require("discord.js");
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]}
+const {Client, Collection, GatewayIntentBits, messageLink, CommandInteractionOptionResolver, MessageReaction, Partials} = require("discord.js");
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent],
+                            partials: [Partials.Message, Partials.Channel, Partials.Reaction],}
   );
 
 // load .env for keys
@@ -38,6 +39,16 @@ client.on("messageCreate", msg => {
    if (command === "ping"){
     msg.channel.send("pong");
    };
+   console.log(msgArray)
+   // 
+   if (command === "help" || command === "list"){
+    msg.channel.send("No Help Yet");
+   };
+
+   if (command === "date"){
+    let date = new Date()
+    msg.channel.send("today is " + date);
+   };
 
   });
 
@@ -51,8 +62,48 @@ client.on("messageCreate", msg => {
   }
 });
 
-// access token
+let pollArr = [];
+// message react logger
 
+client.on("messageReactionAdd", async (rct, user) => {
+  console.log("Reaction Logged")
+  if(!rct.message.channel === "week-name") return;
+
+  await rct.fetch();
+	console.log(`${rct.message.author}'s message "${rct.message.content}" gained a rct!`);
+	console.log(`${rct.count} user(s) have given the same reaction to this message!`);
+
+  if (rct.count >= 5){
+    if(pollArr.length === 0){
+      pollArr.push(rct.message.content)
+      console.log(pollArr)
+      return
+    };
+
+    pollArr.forEach(function(item){
+      if (item === rct.message.content){
+         return;
+    } else{
+      pollArr.push(rct.message.content)
+      console.log(pollArr)
+    }})
+    
+  }
+
+});
+
+/*
+let date = new Date()
+
+if (date.getDate() === 0 //sunday = 0){
+
+};
+*/
+
+// add msg.content with 5+ reacts to array
+// get day -  => if sunday add array to poll => search array for poll result => change server name
+
+// access token
 let token = process.env.token;
 client.login(token);
 
