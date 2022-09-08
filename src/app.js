@@ -2,7 +2,7 @@ const botID = "<@1017092115987169390>";
 
 // poll array
 let oldPoll = [];
-let pollArr = [];
+let pollArr = ["Bdons New Treehouse"];
 
 // load discord.js
 const {
@@ -13,6 +13,7 @@ const {
   CommandInteractionOptionResolver,
   MessageReaction,
   Partials,
+  Guild,
 } = require("discord.js");
 const client = new Client({
   intents: [
@@ -84,7 +85,10 @@ client.on("messageCreate", (msg) => {
       oldPoll.forEach(function (item) {
         if (pollArr.includes(item)) {
           pollArr.splice(pollArr.indexOf(item), 1);
-          console.log(item + " has been removed from array");
+          msg.channel.send(
+            item +
+              " has been removed from the poll because it was used last week"
+          );
         }
       });
 
@@ -100,11 +104,12 @@ client.on("messageCreate", (msg) => {
       // poll end
       client.on("messageReactionAdd", async (reaction) => {
         await reaction.fetch();
-        if (reaction.count > 9 && reaction.emoji.name === "🤙") {
+        if (reaction.count > 9 && reaction.emoji.name === "bd") {
           //"bd" for server / "🤙" for test
-          msg.channel.send(
-            reaction.message.content + " is your NEW WEEK NAME!"
-          ); ////////////////// Automate Server Name Change
+          let newName = reaction.message.content;
+          msg.channel.send(newName + " is your NEW WEEK NAME!"); ////////////////// Automate Server Name Change
+          await msg.guild.setName(newName); // will fail if manage server permission isnt avail
+
           oldPoll = pollArr;
           pollArr = [];
         }
@@ -116,24 +121,6 @@ client.on("messageCreate", (msg) => {
 
   //
 });
-
-///// This Service has ended
-/*
-// Ping Derek on week suggestions
-client.on("messageCreate", msg => {
-  const msgArray = msg.content.split(" ");
-  
-
-  if (msg.channel.name === "week-name"){
-    if (msgArray[msgArray.length - 1].toLowerCase() === "week"){
-      msg.channel.send(`mmm YES! ${msg.content} sounds like a wonderful week name doesnt it <@108420414635540480>!`)
-     }
-  } else{
-    return
-  }
- 
-});
-*/
 
 // message react logger - Needs Work
 
@@ -164,3 +151,21 @@ client.on("messageReactionAdd", async (rct, user) => {
 // access token
 let token = process.env.token;
 client.login(token);
+
+///// This Service has ended
+/*
+// Ping Derek on week suggestions
+client.on("messageCreate", msg => {
+  const msgArray = msg.content.split(" ");
+  
+
+  if (msg.channel.name === "week-name"){
+    if (msgArray[msgArray.length - 1].toLowerCase() === "week"){
+      msg.channel.send(`mmm YES! ${msg.content} sounds like a wonderful week name doesnt it <@108420414635540480>!`)
+     }
+  } else{
+    return
+  }
+ 
+});
+*/
