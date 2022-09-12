@@ -124,33 +124,43 @@ client.on("messageCreate", (msg) => {
   }
 
   //
-});
 
-// message react logger - Needs Work
+  if (command === "start-week") {
+    msg.channel.send("Hello, I am now accepting suggestions for next weeks name");
+    msg.channel.send("Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll");
+    msg.channel.send("Good Luck!");
 
-client.on("messageReactionAdd", async (rct, user) => {
-  if (rct.message.channel.name === "week-name") {
-    await rct.fetch();
-    if (rct.count >= 5) {
-      if (pollArr.length === 0) {
-        pollArr.push(rct.message.content);
+    client.on("messageReactionAdd", async (rct, user) => {
+      if (rct.message.channel.name === "week-name") {
+        await rct.fetch();
+        if (rct.count >= 5) {
+          if (pollArr.length === 0) {
+            pollArr.push(rct.message.content);
+            return;
+          }
+    
+          pollArr.forEach(function (item) {
+            if (item === rct.message.content) {
+              return;
+            }
+          });
+    
+          pollArr.push(rct.message.content);
+          console.log(pollArr);
+        }
+      } else {
+        console.log("trigger return");
         return;
       }
-
-      pollArr.forEach(function (item) {
-        if (item === rct.message.content) {
-          return;
-        }
-      });
-
-      pollArr.push(rct.message.content);
-      console.log(pollArr);
-    }
-  } else {
-    console.log("trigger return");
-    return;
+    }); // message react logger - Needs Work
   }
+
+  //
 });
+
+
+
+
 
 // access token
 let token = process.env.token;
