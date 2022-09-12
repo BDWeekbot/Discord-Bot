@@ -9,6 +9,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  
 jobs:
   deploy:
     # The type of runner that the job will run on
