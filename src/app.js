@@ -2,7 +2,7 @@ const botID = "<@1017092115987169390>";
 
 // poll array
 let oldPoll = [];
-let pollArr = ["Bdons New Treehouse"];
+let pollArr = [];
 
 // load discord.js
 const {
@@ -78,7 +78,7 @@ client.on("messageCreate", (msg) => {
   if (command === "new-week") {
     let date = new Date();
     // getDay() for 0-6, getDate() 0-31
-    if (date.getDay() === 0) {
+    if (date.getDay() === 0 || 1) {
       //sunday = 0)
 
       // check for repeat suggestions
@@ -93,10 +93,14 @@ client.on("messageCreate", (msg) => {
       });
 
       // function interactions
-      msg.channel.send(
-        "*YAAAWN*... Is it that time of the week again already?"
-      );
-      msg.channel.send("Here's your poll for this week...");
+      if (date.getDay() === 1) {
+        msg.channel.send("*YAAAWN*... What? Monday? How long is a week again?");
+      } else {
+        msg.channel.send(
+          "*YAAAWN*... Is it that time of the week again already?"
+        );
+      }
+      msg.channel.send("Well anyway....Here's your poll for this week...");
       pollArr.forEach(function (item) {
         msg.channel.send(item);
       });
@@ -107,7 +111,7 @@ client.on("messageCreate", (msg) => {
         if (reaction.count > 9 && reaction.emoji.name === "bd") {
           //"bd" for server / "🤙" for test
           let newName = reaction.message.content;
-          msg.channel.send(newName + " is your NEW WEEK NAME!"); ////////////////// Automate Server Name Change
+          msg.channel.send(newName + " is your NEW WEEK NAME!");
           await msg.guild.setName(newName); // will fail if manage server permission isnt avail
 
           oldPoll = pollArr;
