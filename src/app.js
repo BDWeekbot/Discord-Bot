@@ -132,7 +132,7 @@ client.on("messageCreate", (msg) => {
   // run poll for new week command
     // poll functions
     
-
+    // new week is the poll 
   if (command === "new-week") {
     let date = new Date();
 
@@ -161,7 +161,7 @@ client.on("messageCreate", (msg) => {
 
   //
  
-
+  // start week begins logging poll criteria
   if (command === "start-week") {
     msg.channel.send("Hello, I am now accepting suggestions for next weeks name");
     msg.channel.send("Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll");
@@ -189,10 +189,11 @@ client.on("messageCreate", (msg) => {
         await rct.fetch();
     
         console.log(rct.message, user);
-    
+        
         if (rct.count >= 5) {
           if (pollArr.length === 0) {
             pollArr.push(rct.message.content);
+            rct.message.channel.send(`${rct.message.content} has been added to the poll`)
             return;
           }
     
@@ -203,7 +204,11 @@ client.on("messageCreate", (msg) => {
           });
     
           pollArr.push(rct.message.content);
-          console.log(pollArr);
+          rct.message.channel.send(`${rct.message.content} has been added to the poll`)
+          rct.message.channel.send(`The current candidates are: `)
+          pollArr.forEach(item =>{
+            rct.message.channel.send(item);
+          });
         }
     
       } else {
