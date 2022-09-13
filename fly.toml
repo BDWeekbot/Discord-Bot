@@ -1,12 +1,16 @@
-# fly.toml file generated for weekbot on 2022-09-08T19:13:03-04:00
+# fly.toml file generated for weekbot on 2022-09-12T19:47:55-04:00
 
 app = "weekbot"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
+services = []
 
 [env]
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
+  cmd = []
+  entrypoint = []
+  exec = []
