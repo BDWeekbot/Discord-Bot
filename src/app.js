@@ -101,15 +101,15 @@ function pingDerek(message) {
 }
 
 function commandList(message){
-  let cmdList = [{name: ">weekbot", description: "It's Week Bot Everybody!"}, // ignores you because he is one with time and time is only a concept
-                 {name: ">ping", description: "replies with pong; check for live bot"},
-                 {name: ">date", description: "replies with todays date"},
-                 {name: ">help", description: "lists all available commands"},
-                 {name: ">new-week", description: "starts the weekly poll to change the week name"}
+  let cmdList = [{name: ">weekbot", description: ": It's Week Bot Everybody!"}, // ignores you because he is one with time and time is only a concept
+                 {name: ">ping", description: ": replies with pong; check for live bot"},
+                 {name: ">date", description: ": replies with todays date"},
+                 {name: ">help", description: ": lists all available commands"},
+                 {name: ">new-week", description: ": starts the weekly poll to change the week name"}
                 ];
   message.channel.send("All Commands Start with '>'");
   cmdList.forEach(item => {
-    message.channel.send(item.name,+ " " + item.description)
+    message.channel.send(item.name + item.description)
   })
 }
 //
