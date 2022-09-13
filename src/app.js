@@ -71,6 +71,19 @@ function runPoll(archive, newPoll, message) {
 
       archive = newPoll;
       newPoll = [];
+      
+      setTimeout(() => {
+        msg.channel.send(
+          "Hello, I am now accepting suggestions for next weeks name"
+        );
+        msg.channel.send(
+          "Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll"
+        );
+        msg.channel.send("Good Luck! ");
+
+      }, "5000")
+     
+      
     }
   });
 }
@@ -158,73 +171,64 @@ client.on("messageCreate", (msg) => {
 
   //
 
-  // start week begins logging poll criteria
-  if (command === "start-week") {
-    msg.channel.send(
-      "Hello, I am now accepting suggestions for next weeks name"
-    );
-    msg.channel.send(
-      "Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll"
-    );
-    msg.channel.send("Good Luck!");
+  
+  
+});
 
+client.on("messageCreate", (message) => {
+  const msgArray = message.content.split(" ");
 
-    client.on("messageCreate", (message) => {
-      const msgArray = message.content.split(" ");
+  if (message.channel.name === "week-name" && !message.author.bot) {
+    if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
+      message.channel.send(
+        `${message.content}, huh? Good Choice! After this post reaches 5 upvotes, I'll add it to next weeks poll! -`)
+        
 
-      if (message.channel.name === "week-name" && !message.author.bot) {
-        if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
-          message.channel.send(
-            `${message.content}, huh? Good Choice! After this post reaches 5 upvotes, I'll add it to next weeks poll!`)
-            console.log("Week Bot Latest Version Log Attempt")
-
-          pingDerek(message);
-        }
-      } else {
-        console.log("return trigger");
-        return;
-      }
-    });
-
-    client.on("messageReactionAdd", async (rct, user) => {
-      if (rct.message.channel.name === "week-name") {
-        await rct.fetch();
-
-        console.log(rct.message, user);
-
-        if (rct.count >= 5) {
-          if (pollArr.length === 0) {
-            pollArr.push(rct.message.content);
-            rct.message.channel.send(
-              `${rct.message.content} has been added to the poll`
-            );
-            return;
-          }
-
-          pollArr.forEach(function (item) {
-            if (item === rct.message.content) {
-              return;
-            }
-          });
-
-          pollArr.push(rct.message.content);
-          rct.message.channel.send(
-            `${rct.message.content} has been added to the poll`
-          );
-          rct.message.channel.send(`The current candidates are: `);
-          pollArr.forEach((item) => {
-            rct.message.channel.send(item);
-          });
-        }
-      } else {
-        console.log("trigger return");
-        return;
-      }
-    }); // message react logger - Needs Work
+      pingDerek(message);
+    }
+  } else {
+    console.log("return trigger");
+    return;
   }
 
-  //
 });
+
+client.on("messageReactionAdd", async (rct, user) => {
+  if (rct.message.channel.name === "week-name") {
+    await rct.fetch();
+
+    console.log(rct.message, user);
+
+    if (rct.count >= 1) {
+      if (pollArr.length === 0) {
+        pollArr.push(rct.message.content);
+        rct.message.channel.send(
+          `${rct.message.content} has been added to the poll`
+        );
+        return;
+      }
+      pollArr.forEach(function (item) {
+        console.log(item)
+        if (item === rct.message.content) {
+          return;
+        }
+      });
+
+      pollArr.push(rct.message.content);
+      rct.message.channel.send(
+        `${rct.message.content} has been added to the poll -`
+      );
+      rct.message.channel.send(`The current candidates are: `);
+      pollArr.forEach((item) => {
+        rct.message.channel.send(item + "-");
+      });
+    }
+  } else {
+    console.log("trigger return");
+    return;
+  }
+}); // message react logger - Needs Work
+
 
 // access token
 let token = process.env.token;
