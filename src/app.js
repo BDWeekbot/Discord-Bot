@@ -100,6 +100,18 @@ function pingDerek(message) {
   }
 }
 
+function commandList(message){
+  let cmdList = [{name: ">weekbot", description: "It's Week Bot Everybody!"}, // ignores you because he is one with time and time is only a concept
+                 {name: ">ping", description: "replies with pong; check for live bot"},
+                 {name: ">date", description: "replies with todays date"},
+                 {name: ">help", description: "lists all available commands"},
+                 {name: ">new-week", description: "starts the weekly poll to change the week name"}
+                ];
+  message.channel.send("All Commands Start with '>'");
+  cmdList.forEach(item => {
+    message.channel.send(item.name,+ " " + item.description)
+  })
+}
 //
 ////
 
@@ -121,13 +133,20 @@ client.on("messageCreate", (msg) => {
 
   // test command
 
+  if (command === "weekbot"){
+    msg.channel.send("*Week Bot has acknowledged your attempt to attract its attention*");
+    msg.channel.send("*Week Bot has chosen not to dignify your attempt with a response*");
+    
+  }
+
   if (command === "ping") {
     msg.channel.send("pong");
   }
   //
 
   if (command === "help" || command === "list") {
-    msg.channel.send("No Help Yet");
+    msg.channel.send("Welcome to Week Bot");
+    commandList(msg);
   }
 
   //
@@ -183,7 +202,7 @@ client.on("messageCreate", (message) => {
   if (message.channel.name === "week-name" && !message.author.bot) {
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
       message.channel.send(
-        `${message.content}, huh? Good Choice! After this post reaches 5 upvotes, I'll add it to next weeks poll! -`)
+        `${message.content}, huh? Good Choice! After this post reaches 4 upvotes, I'll add it to next weeks poll! `)
         
 
       pingDerek(message);
@@ -216,7 +235,7 @@ client.on("messageReactionAdd", async (rct, user) => {
       pollArr.push(rct.message.content);
       
       rct.message.channel.send(
-        `${rct.message.content} has been added to the poll -`
+        `${rct.message.content} has been added to the poll`
       );
       rct.message.channel.send(`The current candidates are: `);
       pollArr.forEach((item) => {
