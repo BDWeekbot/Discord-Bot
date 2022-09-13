@@ -194,10 +194,8 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("messageReactionAdd", async (rct, user) => {
-  if (rct.message.channel.name === "week-name") {
+  if (rct.message.channel.name === "week-name" && !message.author.bot) {
     await rct.fetch();
-
-    console.log(rct.message, user);
 
     if (rct.count >= 1) {
       if (pollArr.length === 0) {
@@ -207,14 +205,13 @@ client.on("messageReactionAdd", async (rct, user) => {
         );
         return;
       }
-      pollArr.forEach(function (item) {
-        console.log(item === rct.message.content)
-        if (item === rct.message.content) {
-          return;
-        }
-      });
-
+  
+      if (pollArr.includes(rct.message.content)){
+        console.log("return from duplicate message")
+        return
+      } else {
       pollArr.push(rct.message.content);
+      
       rct.message.channel.send(
         `${rct.message.content} has been added to the poll -`
       );
@@ -222,6 +219,9 @@ client.on("messageReactionAdd", async (rct, user) => {
       pollArr.forEach((item) => {
         rct.message.channel.send(item);
       });
+      }
+
+      
     }
   } else {
     console.log("trigger return");
