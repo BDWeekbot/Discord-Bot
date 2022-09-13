@@ -215,8 +215,9 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("messageReactionAdd", async (rct, user) => {
+  await rct.fetch();
   if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
-    await rct.fetch();
+    
 
     if (rct.count >= 4) {
       if (pollArr.length === 0) {
@@ -232,7 +233,7 @@ client.on("messageReactionAdd", async (rct, user) => {
         console.log("return from duplicate message")
         return
       } else {
-      pollArr.push(rct.message.content);
+      pollArr.push(rct.message.content); 
       
       rct.message.channel.send(
         `${rct.message.content} has been added to the poll`
