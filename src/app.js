@@ -176,6 +176,7 @@ client.on("messageCreate", (msg) => {
         if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
           message.channel.send(
             `${message.content}, huh? Good Choice! After this post reaches 5 upvotes, I'll add it to next weeks poll!`)
+            console.log("Week Bot Latest Version Log Attempt")
 
           pingDerek(message);
         }
