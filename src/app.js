@@ -199,7 +199,7 @@ client.on("messageReactionAdd", async (rct, user) => {
   if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
     await rct.fetch();
 
-    if (rct.count >= 1) {
+    if (rct.count >= 4) {
       if (pollArr.length === 0) {
         pollArr.push(rct.message.content);
         rct.message.channel.send(
