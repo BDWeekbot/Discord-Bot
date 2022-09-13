@@ -174,7 +174,6 @@ client.on("messageCreate", (msg) => {
 
       if (message.channel.name === "week-name" && !message.author.bot) {
         if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
-          console.log("logged");
           message.channel.send(
             `${message.content}, huh? Good Choice! After this post reaches 5 upvotes, I'll add it to next weeks poll!`)
 
