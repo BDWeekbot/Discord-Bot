@@ -194,7 +194,7 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("messageReactionAdd", async (rct, user) => {
-  if (rct.message.channel.name === "week-name" && !message.author.bot) {
+  if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
     await rct.fetch();
 
     if (rct.count >= 1) {
