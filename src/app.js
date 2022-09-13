@@ -92,7 +92,7 @@ function runPoll(archive, newPoll, message) {
 function pingDerek(message) {
   let randomNumber = Math.floor(Math.random() * 20);
 
-  if (randomNumber % 1.76 === 0) {
+  if (randomNumber % 5 === 0) {
     message.channel.send(
       `Wowzers! ${message.content} sounds like a wonderful week name doesnt it <@108420414635540480>!` // message.content is always >start-week
 
@@ -147,7 +147,7 @@ client.on("messageCreate", (msg) => {
     let date = new Date();
 
     // getDay() for 0-6, getDate() 0-31
-    if (date.getDay() === 0 || 1) {
+    if (date.getDay() === 0 || date.getDay() === 1) {
       //sunday = 0)
       filterRepeatContent(oldPoll, pollArr, msg);
 
@@ -165,7 +165,9 @@ client.on("messageCreate", (msg) => {
       // run poll
       runPoll(oldPoll, pollArr, msg);
     } else {
+      console.log("return trigger - wrong day - not sunday or monday")
       msg.channel.send("This service only works on Sundays, Sorry");
+      return
     }
   }
 
@@ -187,7 +189,7 @@ client.on("messageCreate", (message) => {
       pingDerek(message);
     }
   } else {
-    console.log("return trigger");
+    console.log("return trigger - message creation");
     return;
   }
 
@@ -203,6 +205,7 @@ client.on("messageReactionAdd", async (rct, user) => {
         rct.message.channel.send(
           `${rct.message.content} has been added to the poll`
         );
+        console.log("successfully added to poll")
         return;
       }
   
@@ -224,7 +227,7 @@ client.on("messageReactionAdd", async (rct, user) => {
       
     }
   } else {
-    console.log("trigger return");
+    console.log("trigger return - message reaction");
     return;
   }
 }); // message react logger - Needs Work
