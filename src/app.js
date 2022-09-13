@@ -208,7 +208,7 @@ client.on("messageReactionAdd", async (rct, user) => {
         return;
       }
       pollArr.forEach(function (item) {
-        console.log(item)
+        console.log(item === rct.message.content)
         if (item === rct.message.content) {
           return;
         }
@@ -220,7 +220,7 @@ client.on("messageReactionAdd", async (rct, user) => {
       );
       rct.message.channel.send(`The current candidates are: `);
       pollArr.forEach((item) => {
-        rct.message.channel.send(item + "-");
+        rct.message.channel.send(item);
       });
     }
   } else {
