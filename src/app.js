@@ -63,23 +63,23 @@ function runPoll(archive, newPoll, message) {
 
   client.on("messageReactionAdd", async (reaction) => {
     await reaction.fetch();
-    if (reaction.count > 6 && reaction.emoji.name === "bd") {
+    if (reaction.count > 6 && reaction.emoji.name === "🤙") {
       //"bd" for server / "🤙" for test
       let newName = reaction.message.content;
       message.channel.send(newName + " is your NEW WEEK NAME!");
-      await msg.guild.setName(newName); // will fail if manage server permission isnt avail
+      await message.guild.setName(newName); // will fail if manage server permission isnt avail
 
       archive = newPoll;
       newPoll = [];
       
       setTimeout(() => {
-        msg.channel.send(
+        message.channel.send(
           "Hello, I am now accepting suggestions for next weeks name"
         );
-        msg.channel.send(
+        message.channel.send(
           "Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll"
         );
-        msg.channel.send("Good Luck! ");
+        message.channel.send("Good Luck! ");
 
       }, "5000")
      
