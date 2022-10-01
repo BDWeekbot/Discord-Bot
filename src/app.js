@@ -19,6 +19,7 @@ const {
   Partials,
   Guild,
 } = require("discord.js");
+const mongoose = require("mongoose");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -41,6 +42,22 @@ client.on("ready", function () {
 
 // prefix for commands
 const prefix = ">";
+
+// mongoose declarations
+
+const messageSchema = new mongoose.Schema({
+  // need _id 
+  channelID: String, // .channelId
+  id: String, //.id
+  content: String, // .content
+  votes: Number, //.reactions || think it needs to be an array
+  sender: String, // .username
+
+}, {collection: 'messages'});
+
+const Message = mongoose.model("Message", messageSchema)
+
+
 
 /// Functions
 function filterRepeatContent(arrChecks, thisArr, message) {
@@ -112,8 +129,16 @@ function commandList(message){
     message.channel.send(item.name + item.description)
   })
 }
+
+
+ 
+  
+
+
+
 //
 ////
+
 
 // command response
 client.on("messageCreate", (msg) => {
@@ -200,11 +225,38 @@ client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
 
   if (message.channel.name === "week-name" && !message.author.bot) {
+
+    
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
       message.channel.send(
         `${message.content}, huh? Good Choice! After this post reaches 4 upvotes, I'll add it to next weeks poll! `)
         
+   
+   
 
+      async function run() {
+
+        await Message.create({
+          channelID: message.channelId, // .channelId
+          id: message.id, //.id
+          content: message.content, // .content
+          //votes: message.reactions, //.reactions
+          sender: message.username, // .username
+        });
+
+        Message.find(function(err, messages){
+          if(err) {
+            console.log(err)
+          } else {
+            messages.forEach(item =>{
+              console.log(item.content)
+            })
+            
+          }
+        }) 
+        };
+  
+      run();
       pingDerek(message);
     }
   } else {
@@ -257,6 +309,11 @@ client.on("messageReactionAdd", async (rct, user) => {
 let token = process.env.token;
 client.login(token);
 
+// mongoose connect 
+let mongooseconnectionstring = process.env.mongooseconnectionstring;
+
+if (!mongooseconnectionstring) return;
+  mongoose.connect(mongooseconnectionstring, {dbName: 'discordServer'}).then(() => console.log("Connected to MongoDB"));
 /*
 
 
