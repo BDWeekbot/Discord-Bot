@@ -235,26 +235,29 @@ client.on("messageCreate", (message) => {
    
 
       async function run() {
-
-        await Message.create({
-          channelID: message.channelId, // .channelId
-          id: message.id, //.id
-          content: message.content, // .content
-          //votes: message.reactions, //.reactions
-          sender: message.username, // .username
-        });
-
-        Message.find(function(err, messages){
-          if(err) {
-            console.log(err)
-          } else {
-            messages.forEach(item =>{
-              console.log(item.content)
-            })
-            
-          }
-        }) 
-        };
+        try{
+          await Message.create({
+            channelID: message.channelId, // .channelId
+            id: message.id, //.id
+            content: message.content, // .content
+            //votes: message.reactions, //.reactions
+            sender: message.username, // .username
+          });
+  
+          Message.find(function(err, messages){
+            if(err) {
+              console.log(err)
+            } else {
+              messages.forEach(item =>{
+                console.log(item.content)
+              })
+              
+            }
+          }) 
+        }catch(err){
+          console.log(err)
+        }
+        }
   
       run();
       pingDerek(message);
