@@ -50,13 +50,21 @@ const messageSchema = new mongoose.Schema({
   channelID: String, // .channelId
   id: String, //.id
   content: String, // .content
-  votes: Number, //.reactions || think it needs to be an array
   sender: String, // .username
 
 }, {collection: 'messages'});
 
 const Message = mongoose.model("Message", messageSchema)
 
+const weekNameSchema = new mongoose.Schema({
+  channelID: String,
+  id: String,
+  content: String,
+  votes: Number, // rct.count
+  userID: String,
+});
+
+const weekName = mongoose.model("WeekName", weekNameSchema)
 
 
 /// Functions
@@ -223,7 +231,6 @@ client.on("messageCreate", (msg) => {
 
 client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
-
   if (message.channel.name === "week-name" && !message.author.bot) {
 
     
@@ -271,12 +278,41 @@ client.on("messageCreate", (message) => {
 
 client.on("messageReactionAdd", async (rct, user) => {
   await rct.fetch();
+  console.log(rct,"THIS IS A BREAK LINE /////////////", user)
   if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
     
 
     if (rct.count >= 4) {
       if (pollArr.length === 0) {
         pollArr.push(rct.message.content);
+
+        async function run() {
+          try{
+            await weekName.create({
+              channelID: rct.message.channelId, // .channelId
+              id: rct.message.id, //.id
+              content: rct.message.content, // .content
+              votes: rct.count, //.count
+              userID: rct.message.author.id, // 
+            });
+    
+            weekName.find(function(err, WeekNames){
+              if(err) {
+                console.log(err)
+              } else {
+                WeekNames.forEach(item =>{
+                  console.log(item.content)
+                })
+                
+              }
+            }) 
+          }catch(err){
+            console.log(err)
+          }
+          }
+    
+        run();
+
         rct.message.channel.send(
           `${rct.message.content} has been added to the poll`
         );
@@ -313,7 +349,7 @@ let token = process.env.token;
 client.login(token);
 
 // mongoose connect 
-let mongooseconnectionstring = process.env.mongooseconnectionstring;
+let mongooseconnectionstring = process.env.DB_Url;
 
 if (!mongooseconnectionstring) return;
   mongoose.connect(mongooseconnectionstring, {dbName: 'discordServer'}).then(() => console.log("Connected to MongoDB"));
