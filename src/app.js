@@ -1,8 +1,11 @@
 ////////////////// This is your development branch ///////////////////
 const botID = "<@1017092115987169390>";
-// to-do list:
-// Fix bot author negation on pingderek
-// lower reaction count for victory - DONE
+
+// make poll run off of DB Search and Bot Post
+// pull week names from db into pollArr
+// Delete Week Names after poll
+// Save all messages with votes > 4
+// change time from UTC to PST
 
 // poll array
 let oldPoll = [];
@@ -46,25 +49,16 @@ const prefix = ">";
 // mongoose declarations
 
 const messageSchema = new mongoose.Schema({
-  // need _id 
+  _id: String, //.id
   channelID: String, // .channelId
-  id: String, //.id
+  votes: Number, // rct.count
   content: String, // .content
   sender: String, // .username
-
 }, {collection: 'messages'});
 
 const Message = mongoose.model("Message", messageSchema)
 
-const weekNameSchema = new mongoose.Schema({
-  channelID: String,
-  id: String,
-  content: String,
-  votes: Number, // rct.count
-  userID: String,
-});
 
-const weekName = mongoose.model("WeekName", weekNameSchema)
 
 
 /// Functions
@@ -80,22 +74,41 @@ function filterRepeatContent(arrChecks, thisArr, message) {
 }
 //
 
-function runPoll(archive, newPoll, message) {
+function runPoll(message) {
   message.channel.send("Well anyway....Here's your poll for this week...");
-  newPoll.forEach(function (item) {
-    message.channel.send(item);
-  });
+
+  async function run() {
+    try{
+      Message.find({votes: {$gte: 4}},function(err, messages){
+        if(err) {
+          console.log(err)
+        } else {
+          messages.forEach(item =>{
+            message.channel.send(item.content)
+          })
+          
+        }
+      }) 
+    }catch(err){
+      console.log(err)
+    }
+    }
+  run();
+
 
   client.on("messageReactionAdd", async (reaction) => {
     await reaction.fetch();
-    if (reaction.count > 6 && reaction.emoji.name === "🤙") {
+    if (reaction.count > 6 && reaction.emoji.name === "bd") {
       //"bd" for server / "🤙" for test
       let newName = reaction.message.content;
-      message.channel.send(newName + " is your NEW WEEK NAME!");
-      await message.guild.setName(newName); // will fail if manage server permission isnt avail
-
-      archive = newPoll;
-      newPoll = [];
+     
+      try{
+        message.channel.send(newName + " is your NEW WEEK NAME!");
+        await message.guild.setName(newName); // will fail if manage server permission isnt avail
+      }
+      catch(err){
+        console.log(err)
+      }
       
       setTimeout(() => {
         message.channel.send(
@@ -169,7 +182,7 @@ client.on("messageCreate", (msg) => {
   if (command === "weekbot"){
     msg.channel.send("*Week Bot has acknowledged your attempt to attract its attention*");
     msg.channel.send("*Week Bot has chosen not to dignify your attempt with a response*");
-    
+    msg.channel.send("*Week Bot Caws and Flys off into the distance*")
   }
 
   if (command === "ping") {
@@ -193,6 +206,9 @@ client.on("messageCreate", (msg) => {
 
   // run poll for new week command
   // poll functions
+  if (command === "pun-roll"){
+    runPoll(msg);
+  }
 
   // new week is the poll
   if (command === "new-week") {
@@ -215,7 +231,9 @@ client.on("messageCreate", (msg) => {
       } // install day switch?
 
       // run poll
-      runPoll(oldPoll, pollArr, msg);
+      runPoll(msg);
+
+      // HERE: Delete all messages from last week
     } else {
       console.log("return trigger - wrong day - not sunday or monday")
       msg.channel.send("This service only works on Sundays, Sorry");
@@ -244,23 +262,12 @@ client.on("messageCreate", (message) => {
       async function run() {
         try{
           await Message.create({
+            _id: message.id, //.id
             channelID: message.channelId, // .channelId
-            id: message.id, //.id
+            votes: 0,
             content: message.content, // .content
-            //votes: message.reactions, //.reactions
             sender: message.username, // .username
           });
-  
-          Message.find(function(err, messages){
-            if(err) {
-              console.log(err)
-            } else {
-              messages.forEach(item =>{
-                console.log(item.content)
-              })
-              
-            }
-          }) 
         }catch(err){
           console.log(err)
         }
@@ -278,70 +285,49 @@ client.on("messageCreate", (message) => {
 
 client.on("messageReactionAdd", async (rct, user) => {
   await rct.fetch();
-  console.log(rct,"THIS IS A BREAK LINE /////////////", user)
   if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
-    
-
-    if (rct.count >= 4) {
-      if (pollArr.length === 0) {
-        pollArr.push(rct.message.content);
-
-        async function run() {
-          try{
-            await weekName.create({
-              channelID: rct.message.channelId, // .channelId
-              id: rct.message.id, //.id
-              content: rct.message.content, // .content
-              votes: rct.count, //.count
-              userID: rct.message.author.id, // 
-            });
-    
-            weekName.find(function(err, WeekNames){
-              if(err) {
+         
+        
+        var user_id = rct.message.id;
+        Message.findByIdAndUpdate(user_id, { votes: rct.count },
+                                    function (err, docs) {
+            if (err){
                 console.log(err)
-              } else {
-                WeekNames.forEach(item =>{
-                  console.log(item.content)
-                })
-                
-              }
-            }) 
-          }catch(err){
-            console.log(err)
-          }
-          }
+            }
+            else{
+                console.log("Updated User : ", docs);
+            }
+         });
+      
+
+
+  if (rct.count >= 4) {
+    rct.message.channel.send(
+      `${rct.message.content} has been added to the poll`
+    );
+    rct.message.channel.send(`The current candidates are: `);
     
-        run();
-
-        rct.message.channel.send(
-          `${rct.message.content} has been added to the poll`
-        );
-        console.log("successfully added to poll")
-        return;
+    Message.find
+    Message.find({ votes: {$gte: 4}}, function (err, messages) {
+      if (err){
+        console.log(err);
       }
-  
-      if (pollArr.includes(rct.message.content)){
-        console.log("return from duplicate message")
-        return
-      } else {
-      pollArr.push(rct.message.content); 
-      
-      rct.message.channel.send(
-        `${rct.message.content} has been added to the poll`
-      );
-      rct.message.channel.send(`The current candidates are: `);
-      pollArr.forEach((item) => {
-        rct.message.channel.send(item);
-      });
+      else{
+      messages.forEach(message =>{
+        rct.message.channel.send(message.content)
+      })
       }
-
-      
+    });
+    
     }
+
+      
+    
   } else {
     console.log("trigger return - message reaction");
     return;
   }
-}); // message react logger - Needs Work
+}); 
 
 
 // access token
@@ -353,9 +339,4 @@ let mongooseconnectionstring = process.env.DB_Url;
 
 if (!mongooseconnectionstring) return;
   mongoose.connect(mongooseconnectionstring, {dbName: 'discordServer'}).then(() => console.log("Connected to MongoDB"));
-/*
 
-
-
-
-*/
