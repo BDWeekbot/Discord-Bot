@@ -79,7 +79,7 @@ function runPoll(message) {
 
   async function run() {
     try{
-      Message.find({votes: {$gte: 4}},function(err, messages){
+      Message.find({votes: {$gte: 3}},function(err, messages){
         if(err) {
           console.log(err)
         } else {
@@ -98,7 +98,7 @@ function runPoll(message) {
 
   client.on("messageReactionAdd", async (reaction) => {
     await reaction.fetch();
-    if (reaction.count > 6 && reaction.emoji.name === "bd") {
+    if (reaction.count > 4 && reaction.emoji.name === "bd") {
       //"bd" for server / "🤙" for test
       let newName = reaction.message.content;
      
@@ -301,7 +301,7 @@ client.on("messageReactionAdd", async (rct, user) => {
       
 
 
-  if (rct.count >= 4) {
+  if (rct.count >= 3) {
     rct.message.channel.send(
       `${rct.message.content} has been added to the poll`
     );
