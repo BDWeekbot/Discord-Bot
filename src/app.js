@@ -308,7 +308,7 @@ client.on("messageReactionAdd", async (rct, user) => {
     rct.message.channel.send(`The current candidates are: `);
     
     Message.find
-    Message.find({ votes: {$gte: 4}}, function (err, messages) {
+    Message.find({ votes: {$gte: 3}}, function (err, messages) {
       if (err){
         console.log(err);
       }
