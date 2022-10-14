@@ -251,12 +251,11 @@ client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
   if (message.channel.name === "week-name" && !message.author.bot) {
 
-    
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
       message.channel.send(
         `${message.content}, huh? Good Choice! After this post reaches 4 upvotes, I'll add it to next weeks poll! `)
         
-   
+     
    
 
       async function run() {
@@ -266,7 +265,7 @@ client.on("messageCreate", (message) => {
             channelID: message.channelId, // .channelId
             votes: 0,
             content: message.content, // .content
-            sender: message.username, // .username
+            sender: message.author.id, // .username
           });
         }catch(err){
           console.log(err)
