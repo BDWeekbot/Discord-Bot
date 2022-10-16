@@ -1,10 +1,7 @@
 ////////////////// This is your development branch ///////////////////
 const botID = "<@1017092115987169390>";
 
-// make poll run off of DB Search and Bot Post
-// pull week names from db into pollArr
-// Delete Week Names after poll
-// Save all messages with votes > 4
+
 // change time from UTC to PST
 
 // poll array
@@ -21,6 +18,7 @@ const {
   MessageReaction,
   Partials,
   Guild,
+  DefaultRestOptions,
 } = require("discord.js");
 const mongoose = require("mongoose");
 const client = new Client({
@@ -40,7 +38,7 @@ require("dotenv").config();
 // connection confirmation
 client.on("ready", function () {
   console.log("Connected as " + client.user.tag);
-  client.user.setActivity("DEREK", { type: "WATCHING" });
+  client.user.setActivity("DEREK", { type: "WATCHING" }); // This Doesnt work
 });
 
 // prefix for commands
@@ -53,42 +51,82 @@ const messageSchema = new mongoose.Schema({
   channelID: String, // .channelId
   votes: Number, // rct.count
   content: String, // .content
-  sender: String, // .username
+  sender: String, // .author.username
 }, {collection: 'messages'});
 
 const Message = mongoose.model("Message", messageSchema)
+
+const archiveSchema = new mongoose.Schema({
+  _id: String, //.id
+  channelID: String, // .channelId
+  votes: Number, // rct.count
+  content: String, // .content
+  sender: String, // .author.username
+}, {collection: 'archive'});
+
+const Archive = mongoose.model("Archive", archiveSchema)
 
 
 
 
 /// Functions
-function filterRepeatContent(arrChecks, thisArr, message) {
-  arrChecks.forEach(function (item) {
-    if (thisArr.includes(item)) {
-      thisArr.splice(thisArr.indexOf(item), 1);
-      message.channel.send(
-        item + " has been removed from the poll because it was used last week"
-      );
-    }
-  });
+function filterRepeatContent(message) {
+
+ Message.find({content: message}, function(err, messages){
+            
+                if (messages.length != 0){
+                  console.log("return trigger - duplicate message")
+                  return false;
+                } else {
+                  Archive.find({content: message}, function(err, messages){
+            
+                    if (messages.length != 0){
+                      console.log("return trigger - duplicate message")
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  
+                })
+                }
+              
+            })
+
+  
+  
+
+ 
 }
+
 //
 
 function runPoll(message) {
-  message.channel.send("Well anyway....Here's your poll for this week...");
+  message.channel.send("Well anyway....Here's your poll for this week... The first selection listed below to reach 4 votes will be the new week name");
 
   async function run() {
     try{
-      Message.find({votes: {$gte: 3}},function(err, messages){
+     
+      Message.find({votes: {$gte: 3}},function(err, messages){  /////////////////// Change to 3
         if(err) {
           console.log(err)
         } else {
           messages.forEach(item =>{
             message.channel.send(item.content)
+            
+            Archive.create({
+                _id: item.id, //.id
+                channelID: item.channelId, // .channelId
+                votes: item.votes,
+                content: item.content, // .content
+                sender: item.id, // .username
+              })
+             
           })
           
         }
       }) 
+
+      
     }catch(err){
       console.log(err)
     }
@@ -98,13 +136,15 @@ function runPoll(message) {
 
   client.on("messageReactionAdd", async (reaction) => {
     await reaction.fetch();
-    if (reaction.count > 4 && reaction.emoji.name === "bd") {
+    if (reaction.count >= 4 && reaction.emoji.name === "bd" && reaction.message.author.bot) { /////////////////// Change to 4
       //"bd" for server / "🤙" for test
       let newName = reaction.message.content;
      
       try{
         message.channel.send(newName + " is your NEW WEEK NAME!");
         await message.guild.setName(newName); // will fail if manage server permission isnt avail
+
+
       }
       catch(err){
         console.log(err)
@@ -120,7 +160,25 @@ function runPoll(message) {
         message.channel.send("Good Luck! ");
 
       }, "5000")
-     
+
+      async function deleteAll() {
+        try{
+         
+          Message.deleteMany({votes: {$gte: 0}}, function(err, messages){
+            if(err){
+              console.log(err)
+            } else {
+              console.log(messages)
+            }
+          })
+    
+          
+        }catch(err){
+          console.log(err)
+        }
+        }
+      deleteAll();
+   
       
     }
   });
@@ -217,7 +275,7 @@ client.on("messageCreate", (msg) => {
     // getDay() for 0-6, getDate() 0-31
     if (date.getDay() === 0 || date.getDay() === 1) {
       //sunday = 0)
-      filterRepeatContent(oldPoll, pollArr, msg);
+     
 
       // function interactions
       if (date.getDay() === 1) {
@@ -251,7 +309,7 @@ client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
   if (message.channel.name === "week-name" && !message.author.bot) {
 
-    if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
+    if (msgArray[msgArray.length - 1].toLowerCase() === "week" && filterRepeatContent(message.content)) {
       message.channel.send(
         `${message.content}, huh? Good Choice! After this post reaches 4 upvotes, I'll add it to next weeks poll! `)
         
@@ -294,20 +352,20 @@ client.on("messageReactionAdd", async (rct, user) => {
                 console.log(err)
             }
             else{
-                console.log("Updated User : ", docs);
+                console.log("Updated Message : ", docs);
             }
          });
       
 
 
-  if (rct.count >= 3) {
+  if (rct.count >= 3) { /////////////////// Change to 3
     rct.message.channel.send(
       `${rct.message.content} has been added to the poll`
     );
     rct.message.channel.send(`The current candidates are: `);
     
     Message.find
-    Message.find({ votes: {$gte: 3}}, function (err, messages) {
+    Message.find({ votes: {$gte: 3}}, function (err, messages) { /////////////////// Change to 3
       if (err){
         console.log(err);
       }
