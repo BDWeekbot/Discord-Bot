@@ -70,33 +70,37 @@ const Archive = mongoose.model("Archive", archiveSchema)
 
 
 /// Functions
+
+let filterArr = [];
 function filterRepeatContent(message) {
+/*
+    NOT WORKING :(
 
- Message.find({content: message}, function(err, messages){
-            
-                if (messages.length != 0){
-                  console.log("return trigger - duplicate message")
-                  return false;
-                } else {
-                  Archive.find({content: message}, function(err, messages){
-            
-                    if (messages.length != 0){
-                      console.log("return trigger - duplicate message")
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  
-                })
-                }
-              
-            })
+  Message.find({content: message}, function(err, messages){
 
-  
-  
+        if(err){
+          console.log(err)
+        }else{
+          messages.forEach((item) => {
+            console.log("Item: ",item)
+            filterArr.push(item.content)
+            console.log("Filter Array: ",filterArr)
+          })
+        }})
+  Archive.find({content: message}, function(err, messages){
 
+    if(err){
+      console.log(err)
+    }else{
+      messages.forEach((item) => {
+        console.log(item.content)
+        filterArr.push(item.content)
+      })
+    }})
+  */
  
 }
+
 
 //
 
@@ -308,45 +312,43 @@ client.on("messageCreate", (msg) => {
 client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
   if (message.channel.name === "week-name" && !message.author.bot) {
+    if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
+    
+          async function run() {
+            try{
+              await Message.create({
+                _id: message.id, //.id
+                channelID: message.channelId, // .channelId
+                votes: 0,
+                content: message.content, // .content
+                sender: message.author.id, // .username
+              });
+            }catch(err){
+              console.log(err)
+            }
 
-    if (msgArray[msgArray.length - 1].toLowerCase() === "week" && filterRepeatContent(message.content)) {
-      message.channel.send(
-        `${message.content}, huh? Good Choice! After this post reaches 4 upvotes, I'll add it to next weeks poll! `)
-        
-     
-   
-
-      async function run() {
-        try{
-          await Message.create({
-            _id: message.id, //.id
-            channelID: message.channelId, // .channelId
-            votes: 0,
-            content: message.content, // .content
-            sender: message.author.id, // .username
-          });
-        }catch(err){
-          console.log(err)
+            message.channel.send(
+              `${message.content}, huh? Good Choice! After this post reaches 3 upvotes, I'll add it to next weeks poll! `);
+            }
+      
+          run();
+          pingDerek(message);
         }
-        }
-  
-      run();
-      pingDerek(message);
-    }
-  } else {
+    } 
+   else {
     console.log("return trigger - message creation");
     return;
   }
 
 });
 
-client.on("messageReactionAdd", async (rct, user) => {
-  await rct.fetch();
-  if (rct.message.channel.name === "week-name" && !rct.message.author.bot) {
+client.on("messageReactionAdd", async (reaction, user) => {
+  await reaction.fetch();
+  if (reaction.message.channel.name === "week-name" && !reaction.message.author.bot) {
          
         
-        var user_id = rct.message.id;
-        Message.findByIdAndUpdate(user_id, { votes: rct.count },
+        var user_id = reaction.message.id;
+        Message.findByIdAndUpdate(user_id, { votes: reaction.count },
                                     function (err, docs) {
             if (err){
                 console.log(err)
@@ -358,11 +360,11 @@ client.on("messageReactionAdd", async (rct, user) => {
       
 
 
-  if (rct.count >= 3) { /////////////////// Change to 3
-    rct.message.channel.send(
-      `${rct.message.content} has been added to the poll`
+  if (reaction.count >= 3) { /////////////////// Change to 3
+    reaction.message.channel.send(
+      `${reaction.message.content} has been added to the poll`
     );
-    rct.message.channel.send(`The current candidates are: `);
+    reaction.message.channel.send(`The current candidates are: `);
     
     Message.find
     Message.find({ votes: {$gte: 3}}, function (err, messages) { /////////////////// Change to 3
@@ -371,7 +373,7 @@ client.on("messageReactionAdd", async (rct, user) => {
       }
       else{
       messages.forEach(message =>{
-        rct.message.channel.send(message.content)
+        reaction.message.channel.send(message.content)
       })
       }
     });
