@@ -3,6 +3,7 @@ const botID = "<@1017092115987169390>";
 
 
 // change time from UTC to PST
+// Filter Repeat Content
 
 // poll array
 let oldPoll = [];
@@ -70,36 +71,52 @@ const Archive = mongoose.model("Archive", archiveSchema)
 
 
 /// Functions
+async function createNewMessage(message){
+  try{
+    await Message.create({
+      _id: message.id, //.id
+      channelID: message.channelId, // .channelId
+      votes: 0,
+      content: message.content, // .content
+      sender: message.author.id, // .username
+    });
 
-let filterArr = [];
+    message.channel.send(
+      `${message.content}, huh? Good Choice! After this post reaches 3 upvotes, I'll add it to next weeks poll! `);
+    pingDerek(message);
+
+  }catch(err){
+    console.log(err)
+  }};
+
+
 function filterRepeatContent(message) {
-/*
-    NOT WORKING :(
 
   Message.find({content: message}, function(err, messages){
 
         if(err){
           console.log(err)
-        }else{
-          messages.forEach((item) => {
-            console.log("Item: ",item)
-            filterArr.push(item.content)
-            console.log("Filter Array: ",filterArr)
-          })
-        }})
-  Archive.find({content: message}, function(err, messages){
+        }else if (messages.length > 0){
+          console.log("message messages.length ", messages.length )
+          console.log("trigger return - duplicate message")
+          return}
+         else {
+          Archive.find({content: message}, function(err, messages){
 
-    if(err){
-      console.log(err)
-    }else{
-      messages.forEach((item) => {
-        console.log(item.content)
-        filterArr.push(item.content)
-      })
-    }})
-  */
- 
-}
+            if(err){
+              console.log(err)
+            } else if (messages.length > 0){
+              console.log("archive messages.length ", messages.length )
+              console.log("trigger return - duplicate message")
+              return}
+              else {
+
+             createNewMessage(message)
+                
+            }});
+          }
+        })
+      }; 
 
 
 //
@@ -313,26 +330,9 @@ client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
   if (message.channel.name === "week-name" && !message.author.bot) {
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
-    
-          async function run() {
-            try{
-              await Message.create({
-                _id: message.id, //.id
-                channelID: message.channelId, // .channelId
-                votes: 0,
-                content: message.content, // .content
-                sender: message.author.id, // .username
-              });
-            }catch(err){
-              console.log(err)
-            }
 
-            message.channel.send(
-              `${message.content}, huh? Good Choice! After this post reaches 3 upvotes, I'll add it to next weeks poll! `);
-            }
-      
-          run();
-          pingDerek(message);
+          filterRepeatContent(message);
+         
         }
     } 
    else {
