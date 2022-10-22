@@ -159,7 +159,7 @@ function runPoll(message) {
 
   client.on("messageReactionAdd", async (reaction) => {
     await reaction.fetch();
-    if (reaction.count >= 4 && reaction.emoji.name === "bd" && reaction.message.author.bot) { /////////////////// Change to 4
+    if (reaction.count === 4 && reaction.emoji.name === "bd" && reaction.message.author.bot) { /////////////////// Change to 4
       //"bd" for server / "🤙" for test
       let newName = reaction.message.content;
      
@@ -167,6 +167,11 @@ function runPoll(message) {
         message.channel.send(newName + " is your NEW WEEK NAME!");
         await message.guild.setName(newName); // will fail if manage server permission isnt avail
 
+        
+        client.off("messageReactionAdd", (reaction) => {
+          console.log("Message Reaction Event Listener - Off");
+          console.log(reaction);
+        })
 
       }
       catch(err){
@@ -201,10 +206,15 @@ function runPoll(message) {
         }
         }
       deleteAll();
-   
+      
+      
       
     }
+
+    
   });
+
+  
 }
 
 //
