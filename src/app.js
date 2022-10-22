@@ -32,6 +32,9 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
+const { Message } = import("./models/Message");
+const { Archive } = import("./models/Archive");
+
 // load .env for keys
 require("dotenv").config();
 // if run from src folder require("dotenv").config({path:"../.env"})
@@ -44,30 +47,6 @@ client.on("ready", function () {
 
 // prefix for commands
 const prefix = ">";
-
-// mongoose declarations
-
-const messageSchema = new mongoose.Schema({
-  _id: String, //.id
-  channelID: String, // .channelId
-  votes: Number, // rct.count
-  content: String, // .content
-  sender: String, // .author.username
-}, {collection: 'messages'});
-
-const Message = mongoose.model("Message", messageSchema)
-
-const archiveSchema = new mongoose.Schema({
-  _id: String, //.id
-  channelID: String, // .channelId
-  votes: Number, // rct.count
-  content: String, // .content
-  sender: String, // .author.username
-}, {collection: 'archive'});
-
-const Archive = mongoose.model("Archive", archiveSchema)
-
-
 
 
 /// Functions
