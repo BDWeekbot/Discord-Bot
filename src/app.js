@@ -32,8 +32,7 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-const { Message } = import("./models/Message");
-const { Archive } = import("./models/Archive");
+const { Archive, Message } = require("./models.js");
 
 // load .env for keys
 require("dotenv").config();
