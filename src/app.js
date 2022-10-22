@@ -3,7 +3,7 @@ const botID = "<@1017092115987169390>";
 
 
 // change time from UTC to PST
-// Filter Repeat Content
+// Tell User Their Submission is a Duplicate
 
 // poll array
 let oldPoll = [];
@@ -99,6 +99,7 @@ function filterRepeatContent(message) {
         }else if (messages.length > 0){
           console.log("message messages.length ", messages.length )
           console.log("trigger return - duplicate message")
+          message.channel.send("Sorry, this suggestion has already been submitted this week")
           return}
          else {
           Archive.find({content: message}, function(err, messages){
@@ -108,6 +109,7 @@ function filterRepeatContent(message) {
             } else if (messages.length > 0){
               console.log("archive messages.length ", messages.length )
               console.log("trigger return - duplicate message")
+              message.channel.send("Sorry, this suggestion was submitted last week")
               return}
               else {
 
@@ -176,7 +178,7 @@ function runPoll(message) {
           "Hello, I am now accepting suggestions for next weeks name"
         );
         message.channel.send(
-          "Your suggestion must end in 'week' and must recieve at least 5 reacts to be entered into Sunday's Poll"
+          "Your suggestion must end in 'week' and must recieve at least 3 reacts to be entered into Sunday's Poll"
         );
         message.channel.send("Good Luck! ");
 
@@ -360,7 +362,7 @@ client.on("messageReactionAdd", async (reaction, user) => {
       
 
 
-  if (reaction.count >= 3) { /////////////////// Change to 3
+  if (reaction.count === 3) { /////////////////// Change to 3
     reaction.message.channel.send(
       `${reaction.message.content} has been added to the poll`
     );
