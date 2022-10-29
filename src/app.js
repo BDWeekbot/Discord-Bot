@@ -5,9 +5,7 @@ const botID = "<@1017092115987169390>";
 // change time from UTC to PST
 // Tell User Their Submission is a Duplicate
 
-// poll array
-let oldPoll = [];
-let pollArr = [];
+
 
 // load discord.js
 const {
@@ -356,16 +354,15 @@ client.on("messageReactionAdd", async (reaction, user) => {
     );
     reaction.message.channel.send(`The current candidates are: `);
     
-    Message.find
     Message.find({ votes: {$gte: 3}}, function (err, messages) { /////////////////// Change to 3
       if (err){
         console.log(err);
       }
       else{
+      
       messages.forEach(message =>{
         reaction.message.channel.send(message.content)
-      })
-      }
+      })};
     });
     
     }
