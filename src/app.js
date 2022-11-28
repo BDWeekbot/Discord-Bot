@@ -31,6 +31,8 @@ const client = new Client({
 });
 
 const { Archive, Message } = require("./models.js");
+const {filterRepeatContent} = require("./functions/new-message")
+const {pingDerek} = require("./functions/pingDerek")
 
 // load .env for keys
 require("dotenv").config();
@@ -47,54 +49,6 @@ const prefix = ">";
 
 
 /// Functions
-async function createNewMessage(message){
-  try{
-    await Message.create({
-      _id: message.id, //.id
-      channelID: message.channelId, // .channelId
-      votes: 0,
-      content: message.content, // .content
-      sender: message.author.id, // .username
-    });
-
-    message.channel.send(
-      `${message.content}, huh? Good Choice! After this post reaches 3 upvotes, I'll add it to next weeks poll! `);
-    pingDerek(message);
-
-  }catch(err){
-    console.log(err)
-  }};
-
-
-function filterRepeatContent(message) {
-
-  Message.find({content: message}, function(err, messages){
-
-        if(err){
-          console.log(err)
-        }else if (messages.length > 0){
-          console.log("message messages.length ", messages.length )
-          console.log("trigger return - duplicate message")
-          message.channel.send("Sorry, this suggestion has already been submitted this week")
-          return}
-         else {
-          Archive.find({content: message}, function(err, messages){
-
-            if(err){
-              console.log(err)
-            } else if (messages.length > 0){
-              console.log("archive messages.length ", messages.length )
-              console.log("trigger return - duplicate message")
-              message.channel.send("Sorry, this suggestion was submitted last week")
-              return}
-              else {
-
-             createNewMessage(message)
-                
-            }});
-          }
-        })
-      }; 
 
 
 //
@@ -194,16 +148,7 @@ function runPoll(message) {
 }
 
 //
-function pingDerek(message) {
-  let randomNumber = Math.floor(Math.random() * 20);
 
-  if (randomNumber % 5 === 0) {
-    message.channel.send(
-      `Wowzers! ${message.content} sounds like a wonderful week name doesnt it <@108420414635540480>!` // message.content is always >start-week
-
-    );
-  }
-}
 
 function commandList(message){
   let cmdList = [{name: ">weekbot", description: ": It's Week Bot Everybody!"}, // ignores you because he is one with time and time is only a concept
@@ -320,7 +265,7 @@ client.on("messageCreate", (message) => {
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
 
           filterRepeatContent(message);
-         
+          pingDerek(message);
         }
     } 
    else {
