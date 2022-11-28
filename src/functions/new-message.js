@@ -1,3 +1,25 @@
+const {
+    Client,
+    Collection,
+    GatewayIntentBits,
+    messageLink,
+    CommandInteractionOptionResolver,
+    MessageReaction,
+    Partials,
+    Guild,
+    DefaultRestOptions,
+  } = require("discord.js");
+  const mongoose = require("mongoose");
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.MessageContent,
+    ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+  });
+
 async function createNewMessage(message){
     try{
       await Message.create({
