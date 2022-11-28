@@ -1,4 +1,4 @@
-const { Archive, Message } = require(".models");
+const { Archive, Message } = require("../models");
 
 async function createNewMessage(message){
     try{
