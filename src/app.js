@@ -32,7 +32,7 @@ const client = new Client({
 
 const { Archive, Message } = require("./models.js");
 const {filterRepeatContent} = require("./functions/new-message")
-const {pingDerek} = require("./functions/pingDerek")
+
 
 // load .env for keys
 require("dotenv").config();
@@ -265,7 +265,7 @@ client.on("messageCreate", (message) => {
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
 
           filterRepeatContent(message);
-          pingDerek(message);
+         
         }
     } 
    else {

@@ -1,4 +1,5 @@
 const { Archive, Message } = require("../models");
+const {pingDerek} = require("./pingDerek")
 
 async function createNewMessage(message){
     try{
