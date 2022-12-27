@@ -89,6 +89,8 @@ async function newUser(message) {
               .catch((error) => {
                 console.log("Catch exec")
                 console.log(error)
+              }).then(() => {
+                message.channel.send(`Thanks ${message.author}, your data is now being collected and sold to big business. We're watching your every move.`)
               })
             })
           })
