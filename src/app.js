@@ -30,9 +30,12 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
+
 const { Archive, Message } = require("./models.js");
 const {filterRepeatContent} = require("./functions/new-message")
 
+const {parseWeekbotCommand} = require("./functions/commandParsing")
+const {eventModule} = require("./events/events")
 
 // load .env for keys
 require("dotenv").config();
@@ -41,223 +44,17 @@ require("dotenv").config();
 // connection confirmation
 client.on("ready", function () {
   console.log("Connected as " + client.user.tag);
-  client.user.setActivity("DEREK", { type: "WATCHING" }); // This Doesnt work
+  client.user.setActivity("DEREK", { type: "WATCHING" }); 
+  //eventModule() // instantiate events on application load
 });
-
-// prefix for commands
-const prefix = ">";
-
-
-/// Functions
-
-
-//
-
-function runPoll(message) {
-  message.channel.send("Well anyway....Here's your poll for this week... The first selection listed below to reach 4 votes will be the new week name");
-
-  async function run() {
-    try{
-     
-      Message.find({votes: {$gte: 3}},function(err, messages){  /////////////////// Change to 3
-        if(err) {
-          console.log(err)
-        } else {
-          messages.forEach(item =>{
-            message.channel.send(item.content)
-            
-            Archive.create({
-                _id: item.id, //.id
-                channelID: item.channelId, // .channelId
-                votes: item.votes,
-                content: item.content, // .content
-                sender: item.id, // .username
-              })
-             
-          })
-          
-        }
-      }) 
-
-      
-    }catch(err){
-      console.log(err)
-    }
-    }
-  run();
-
-
-  client.on("messageReactionAdd", async (reaction) => {
-    await reaction.fetch();
-    if (reaction.count === 4 && reaction.emoji.name === "bd" && reaction.message.author.bot) { /////////////////// Change to 4
-      //"bd" for server / "🤙" for test
-      let newName = reaction.message.content;
-     
-      try{
-        message.channel.send(newName + " is your NEW WEEK NAME!");
-        await message.guild.setName(newName); // will fail if manage server permission isnt avail
-
-        
-        client.off("messageReactionAdd", (reaction) => {
-          console.log("Message Reaction Event Listener - Off");
-          console.log(reaction);
-        })
-
-      }
-      catch(err){
-        console.log(err)
-      }
-      
-      setTimeout(() => {
-        message.channel.send(
-          "Hello, I am now accepting suggestions for next weeks name"
-        );
-        message.channel.send(
-          "Your suggestion must end in 'week' and must recieve at least 3 reacts to be entered into Sunday's Poll"
-        );
-        message.channel.send("Good Luck! ");
-
-      }, "5000")
-
-      async function deleteAll() {
-        try{
-         
-          Message.deleteMany({votes: {$gte: 0}}, function(err, messages){
-            if(err){
-              console.log(err)
-            } else {
-              console.log(messages)
-            }
-          })
-    
-          
-        }catch(err){
-          console.log(err)
-        }
-        }
-      deleteAll();
-      
-      
-      
-    }
-
-    
-  });
-
-  
-}
-
-//
-
-
-function commandList(message){
-  let cmdList = [{name: ">weekbot", description: ": It's Week Bot Everybody!"}, // ignores you because he is one with time and time is only a concept
-                 {name: ">ping", description: ": replies with pong; check for live bot"},
-                 {name: ">date", description: ": replies with todays date"},
-                 {name: ">help", description: ": lists all available commands"},
-                 {name: ">new-week", description: ": starts the weekly poll to change the week name"}
-                ];
-  message.channel.send("All Commands Start with '>'");
-  cmdList.forEach(item => {
-    message.channel.send(item.name + item.description)
-  })
-}
-
-
- 
-  
-
-
-
-//
-////
-
 
 // command response
 client.on("messageCreate", (msg) => {
-  // reads prefix commands and no response to own message
-  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
-
-  //cuts prefix out of parsing
-  const args = msg.content.slice(prefix.length).split(/ +/);
-  const command = args.shift().toLowerCase();
-
-  /// Message Array
-  const msgArray = msg.content.split(" ");
-  const argument = msgArray.slice(1);
-  const cmd = msgArray[0];
-
-  /////// Commands
-
-  // test command
-
-  if (command === "weekbot"){
-    msg.channel.send("*Week Bot has acknowledged your attempt to attract its attention*");
-    msg.channel.send("*Week Bot has chosen not to dignify your attempt with a response*");
-    msg.channel.send("*Week Bot Caws and Flys off into the distance*")
-  }
-
-  if (command === "ping") {
-    msg.channel.send("pong");
-  }
-  //
-
-  if (command === "help" || command === "list") {
-    msg.channel.send("Welcome to Week Bot");
-    commandList(msg);
-  }
-
-  //
-
-  if (command === "date") {
-    let date = new Date();
-    msg.channel.send("today is " + date);
-  }
-
-  //
-
-  // run poll for new week command
-  // poll functions
-  if (command === "pun-roll"){
-    runPoll(msg);
-  }
-
-  // new week is the poll
-  if (command === "new-week") {
-    let date = new Date();
-
-    // getDay() for 0-6, getDate() 0-31
-    if (date.getDay() === 0 || date.getDay() === 1) {
-      //sunday = 0)
-     
-
-      // function interactions
-      if (date.getDay() === 1) {
-        console.log(date.getDate()); // This hasnt worked yet
-        msg.channel.send("*YAAAWN*... What? Monday? How long is a week again?");
-      } else {
-        console.log(date.getDay());
-        msg.channel.send(
-          "*YAAAWN*... Is it that time of the week again already?"
-        );
-      } // install day switch?
-
-      // run poll
-      runPoll(msg);
-
-      // HERE: Delete all messages from last week
-    } else {
-      console.log("return trigger - wrong day - not sunday or monday")
-      msg.channel.send("This service only works on Sundays, Sorry");
-      return
-    }
-  }
-
-  //
-
-  
+  parseWeekbotCommand(msg);  
   
 });
+
+// Message Stream Check 
 
 client.on("messageCreate", (message) => {
   const msgArray = message.content.split(" ");
@@ -275,21 +72,23 @@ client.on("messageCreate", (message) => {
 
 });
 
+// message reaction stream check
+
 client.on("messageReactionAdd", async (reaction, user) => {
   await reaction.fetch();
   if (reaction.message.channel.name === "week-name" && !reaction.message.author.bot) {
          
         
-        var user_id = reaction.message.id;
-        Message.findByIdAndUpdate(user_id, { votes: reaction.count },
-                                    function (err, docs) {
-            if (err){
-                console.log(err)
-            }
-            else{
-                console.log("Updated Message : ", docs);
-            }
-         });
+  var user_id = reaction.message.id;
+  Message.findByIdAndUpdate(user_id, { votes: reaction.count },
+                              function (err, docs) {
+      if (err){
+          console.log(err)
+      }
+      else{
+          console.log("Updated Message : ", docs);
+      }
+    });
       
 
 
@@ -322,7 +121,7 @@ client.on("messageReactionAdd", async (reaction, user) => {
 
 
 // access token
-let token = process.env.token;
+let token = process.env.TOKEN;
 client.login(token);
 
 // mongoose connect 
