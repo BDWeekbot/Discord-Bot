@@ -109,4 +109,3 @@ async function newUser(message) {
 
 module.exports = {newUser}
 
-// github discord auth token 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

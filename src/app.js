@@ -121,7 +121,7 @@ client.on("messageReactionAdd", async (reaction, user) => {
 
 
 // access token
-let token = process.env.TOKEN;
+let token = process.env.token;
 client.login(token);
 
 // mongoose connect 
