@@ -23,7 +23,7 @@ const messageSchema = new mongoose.Schema({
     user: String,
     firstName: String, //
     lastName: String,
-    birthday: String, // 
+    birthday: Object, // 
 
   }, {collection: "users"})
 
