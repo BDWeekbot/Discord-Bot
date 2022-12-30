@@ -23,7 +23,11 @@ const messageSchema = new mongoose.Schema({
     user: String,
     firstName: String, //
     lastName: String,
-    birthday: Object, // 
+    birthday: {
+      month: String,
+      day: String,
+      year: String,
+    }, // 
 
   }, {collection: "users"})
 
