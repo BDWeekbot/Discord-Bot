@@ -3,7 +3,7 @@ function pingDerek(message) {
   
     if (randomNumber % 5 === 0) {
       message.channel.send(
-        `Wowzers! ${message.content} sounds like a wonderful week name doesnt it <@108420414635540480>!` // message.content is always >start-week
+        `Wow! ${message.content} sounds like a cool cat doesnt it <@108420414635540480>!` // message.content is always >start-week
   
       );
     }

@@ -1,7 +1,17 @@
 
-function changeServerName(message) {
-    message.channel.send("Well anyway....Here's your poll for this week... The first week below to reach 4 votes wins");
-  
+function changeServerName(interaction, client) {
+    const guildId = interaction.guildId
+    const channelId = interaction.channelId
+    const channel = client.channels.cache.get(`${channelId}`)
+    const guild = client.guilds.cache.get(`${guildId}`)
+    
+    //console.log(interaction)
+    //console.log(channel)
+    console.log(guild)
+    channel.send("Well anyway....Here's your poll for this week... The first week below to reach 4 votes wins");
+
+
+    
     async function run() {
       try{
        
@@ -10,7 +20,7 @@ function changeServerName(message) {
             console.log(err)
           } else {
             messages.forEach(item =>{
-              message.channel.send(item.content)
+              channel.send(item.content)
               
               Archive.create({
                   _id: item.id, //.id
@@ -40,8 +50,8 @@ function changeServerName(message) {
         let newName = reaction.message.content;
        
         try{
-          message.channel.send(newName + " is the new week name!");
-          await message.guild.setName(newName); // will fail if manage server permission isnt avail
+          channel.send(newName + " is the new week name!");
+          await guild.setName(newName); // will fail if manage server permission isnt avail
           // await message.guild.setBanner(./banner.png) //recieves auto generated image
           
           client.off("messageReactionAdd", (reaction) => {
@@ -54,13 +64,13 @@ function changeServerName(message) {
         }
         
         setTimeout(() => {
-          message.channel.send(
+         channel.send(
             "Hello, I am now accepting suggestions for next weeks name"
           );
-          message.channel.send(
+          channel.send(
             "Your suggestion must end in 'week' and must recieve at least 3 reacts to be entered into the next Poll"
           );
-          message.channel.send("Good Luck! ");
+          channel.send("Good Luck! ");
   
         }, "1000")
   
@@ -88,7 +98,8 @@ function changeServerName(message) {
   
       
     });
-  
+   
+    
     
   }
 

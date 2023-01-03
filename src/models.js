@@ -21,8 +21,7 @@ const messageSchema = new mongoose.Schema({
   const userSchema = new mongoose.Schema({
     _id: String, //.id
     user: String,
-    firstName: String, //
-    lastName: String,
+    name: String, //
     birthday: {
       month: String,
       day: String,

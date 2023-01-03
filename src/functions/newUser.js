@@ -1,15 +1,24 @@
 const { User } = require("../models");
-async function newUser(message) {
-  console.log("new user start");
-  let user = message.author.id;
 
-  message.channel.send("New User:");
+
+async function newUser(interaction, client) {
+
+  console.log("new user start");
+
+  const guildId = interaction.guildId
+  const channelId = interaction.channelId
+  const channel = client.channels.cache.get(`${channelId}`)
+  const guild = client.guilds.cache.get(`${guildId}`)
+  const user = interaction.user.id;
+  
+
+  
+  
   try {
     await User.create({
       _id: user, //.id
       user: user,
-      firstName: "", //.id
-      lastName: "",
+      name: "", //.id
       birthday: "", //
     });
 
@@ -20,14 +29,14 @@ async function newUser(message) {
 
   const filter = (m) => m.author.id === user;
 
-  message.channel.send("What is your first name?");
-  message.channel
+  channel.send("What is your name?");
+  channel
     .awaitMessages({ filter: filter, max: 1, time: 60000 })
     .then((collected) => {
       console.log(collected.first().content);
       let fName = collected.first().content;
 
-      User.findByIdAndUpdate(user, { firstName: fName }, function (err, docs) {
+      User.findByIdAndUpdate(user, { name: fName }, function (err, docs) {
         if (err) {
           console.log(err);
         } else {
@@ -39,74 +48,51 @@ async function newUser(message) {
       console.log("Catch exec");
       console.log(error);
     })
-    .then(() => {
-      message.channel.send("What is your last name?");
-      message.channel
-        .awaitMessages({ filter: filter, max: 1, time: 60000 })
-        .then((collected) => {
-          console.log(collected.first().content);
-          let lName = collected.first().content;
+      .then(() => {
+        channel.send("When is your Birthday (mm/dd/yyyy)?");
+        channel
+          .awaitMessages({ filter: filter, max: 1, time: 60000 })
+          .then((collected) => {
+            console.log(collected.first().content);
+            let birthday = collected.first().content;
+            let bdaySplit = birthday.split("/");
 
-          User.findByIdAndUpdate(
-            user,
-            { lastName: lName },
-            function (err, docs) {
-              if (err) {
-                console.log(err);
-              } else {
-                console.log("Updated Message : ", docs);
-              }
-            }
-          );
-        })
-        .catch((error) => {
-          console.log("Catch exec");
-          console.log(error);
-        })
-        .then(() => {
-          message.channel.send("When is your Birthday (mm/dd/yyyy)?");
-          message.channel
-            .awaitMessages({ filter: filter, max: 1, time: 60000 })
-            .then((collected) => {
-              console.log(collected.first().content);
-              let birthday = collected.first().content;
-              let bdaySplit = birthday.split("/");
-
-              User.findByIdAndUpdate(
-                user,
-                {
-                  birthday: {
-                    month: bdaySplit[0],
-                    day: bdaySplit[1],
-                    year: bdaySplit[2],
-                  },
+            User.findByIdAndUpdate(
+              user,
+              {
+                birthday: {
+                  month: bdaySplit[0],
+                  day: bdaySplit[1],
+                  year: bdaySplit[2],
                 },
-                function (err, docs) {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    console.log("Updated Message : ", docs);
-                  }
+              },
+              function (err, docs) {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log("Updated Message : ", docs);
                 }
-              );
-            })
-            .catch((error) => {
-              console.log("Catch exec");
-              console.log(error);
-            })
-            .then(() => {
-              message.channel.send(
-                `Thanks ${message.author}, your data is now being collected and sold to big business. We're watching your every move.`
-              );
-            });
-        });
+              }
+            );
+          })
+          .catch((error) => {
+            console.log("Catch exec");
+            console.log(error);
+          })
+          .then(() => {
+            channel.send(
+              `Thanks ${interaction.user.username}, your data is now being collected and sold to big business. We're watching your every move.`
+            );
+          });
+      
     });
+    
 }
 
 /*
        _id: user, //.id
         user: user,
-        firstName: fName, //.id
+        name: fName, //.id
         birthday: birthday, // 
        */
 
