@@ -75,7 +75,7 @@ client.on(Events.InteractionCreate, interaction => {
         },
         function (err, docs) {
           if (err) {
-            console.log(err);
+            console.log(err); 
           } else {
             console.log("Updated Message : ", docs);
           }
