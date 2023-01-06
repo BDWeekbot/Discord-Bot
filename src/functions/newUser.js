@@ -61,14 +61,19 @@ client.on(Events.InteractionCreate, interaction => {
 
     let bdaySplit = birthday.split("/");
 
-User.findByIdAndUpdate( user,
-  { name: name,
-    birthday: {
-      month: bdaySplit[0],
-      day: bdaySplit[1],
-      year: bdaySplit[2],
-    },
-  })
+    try{
+      User.findByIdAndUpdate( user,
+        { name: name,
+          birthday: {
+            month: bdaySplit[0],
+            day: bdaySplit[1],
+            year: bdaySplit[2],
+          },
+        })
+    } catch(error){
+      console.log(error)
+    }
+
 
 })
 
