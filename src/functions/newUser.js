@@ -1,5 +1,5 @@
 const { User } = require("../models");
-
+const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, Events} = require("discord.js")
 
 async function newUser(interaction, client) {
 
@@ -27,66 +27,51 @@ async function newUser(interaction, client) {
     console.log(err);
   }
 
-  const filter = (m) => m.author.id === user;
+ 
+const modal = new ModalBuilder()
+.setCustomId("userModal")
+.setTitle("User Info")
 
-  channel.send("What is your name?");
-  channel
-    .awaitMessages({ filter: filter, max: 1, time: 60000 })
-    .then((collected) => {
-      console.log(collected.first().content);
-      let fName = collected.first().content;
+const nameInput = new TextInputBuilder()
+  .setCustomId("nameInput")
+  .setLabel("What is your name?")
+  .setStyle(TextInputStyle.Short)
+  .setRequired(true)
 
-      User.findByIdAndUpdate(user, { name: fName }, function (err, docs) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("Updated Message : ", docs);
-        }
-      });
-    })
-    .catch((error) => {
-      console.log("Catch exec");
-      console.log(error);
-    })
-      .then(() => {
-        channel.send("When is your Birthday (mm/dd/yyyy)?");
-        channel
-          .awaitMessages({ filter: filter, max: 1, time: 60000 })
-          .then((collected) => {
-            console.log(collected.first().content);
-            let birthday = collected.first().content;
-            let bdaySplit = birthday.split("/");
+const bdayInput = new TextInputBuilder()
+  .setCustomId("birthdayInput")
+  .setLabel("When is your birthday")
+  .setValue("mm/dd/yyyy")
+  .setStyle(TextInputStyle.Short)
+  .setRequired(true)
 
-            User.findByIdAndUpdate(
-              user,
-              {
-                birthday: {
-                  month: bdaySplit[0],
-                  day: bdaySplit[1],
-                  year: bdaySplit[2],
-                },
-              },
-              function (err, docs) {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log("Updated Message : ", docs);
-                }
-              }
-            );
-          })
-          .catch((error) => {
-            console.log("Catch exec");
-            console.log(error);
-          })
-          .then(() => {
-            channel.send(
-              `Thanks ${interaction.user.username}, your data is now being collected and sold to big business. We're watching your every move.`
-            );
-          });
-      
-    });
-    
+const firstActionRow = new ActionRowBuilder().addComponents(nameInput)
+const secondActionRow = new ActionRowBuilder().addComponents(bdayInput)
+
+
+modal.addComponents(firstActionRow, secondActionRow)
+
+await interaction.showModal(modal)
+
+client.on(Events.InteractionCreate, interaction => {
+  if (!interaction.isModalSubmit()) return;
+
+    const name = interaction.fields.getTextInputValue("nameInput")
+    const birthday = interaction.fields.getTextInputValue("birthdayInput")
+
+    let bdaySplit = birthday.split("/");
+
+User.findByIdAndUpdate( user,
+  { name: name,
+    birthday: {
+      month: bdaySplit[0],
+      day: bdaySplit[1],
+      year: bdaySplit[2],
+    },
+  })
+
+})
+
 }
 
 /*
@@ -94,6 +79,18 @@ async function newUser(interaction, client) {
         user: user,
         name: fName, //.id
         birthday: birthday, // 
+
+
+
+
        */
 
 module.exports = { newUser };
+
+
+
+
+
+
+
+

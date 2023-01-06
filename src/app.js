@@ -35,6 +35,7 @@ const { filterRepeatContent } = require("./functions/new-message");
 
 const { eventModule } = require("./events/events");
 const {Commandler} = require("./handlers/commandler")
+const {menuTree} = require("./handlers/menu.handler")
 
 // load .env for keys
 require("dotenv").config();
@@ -46,7 +47,7 @@ client.on("ready", function () {
   client.user.setActivity("DEREK", { type: "WATCHING" });
   //eventModule();
   Commandler(client) // message + reaction handler
-
+  menuTree(client)
    // instantiate events on application load
   // pollModule() -- not built - instantiate message listeners
   
@@ -74,6 +75,9 @@ Create Menu Tree with Buttons to increase UX Design
 // move to poll handler
 
 client.on("messageCreate", (message) => {
+
+  console.log(message)
+
   const msgArray = message.content.split(" ");
   if (message.channel.name === "week-name" && !message.author.bot) {
     if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
