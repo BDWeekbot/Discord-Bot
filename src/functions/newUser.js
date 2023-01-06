@@ -61,6 +61,8 @@ client.on(Events.InteractionCreate, interaction => {
     const birthday = interaction.fields.getTextInputValue("birthdayInput")
 
     console.log(name, birthday)
+
+    interaction.reply("thanks")
     /*
     let bdaySplit = birthday.split("/");
 
