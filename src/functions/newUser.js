@@ -13,7 +13,7 @@ async function newUser(interaction, client) {
   
 
   
-  
+  /*
   try {
     await User.create({
       _id: user, //.id
@@ -26,7 +26,7 @@ async function newUser(interaction, client) {
   } catch (err) {
     console.log(err);
   }
-
+*/
  
 const modal = new ModalBuilder()
 .setCustomId("userModal")
@@ -54,7 +54,7 @@ modal.addComponents(firstActionRow, secondActionRow)
 await interaction.showModal(modal)
 
 client.on(Events.InteractionCreate, interaction => {
-  console.log(interaction)
+  
   if (!interaction.isModalSubmit()) return;
     console.log("modal submit running")
     const name = interaction.fields.getTextInputValue("nameInput")
