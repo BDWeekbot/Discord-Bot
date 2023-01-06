@@ -13,7 +13,7 @@ async function newUser(interaction, client) {
   
 
   
-  /*
+  
   try {
     await User.create({
       _id: user, //.id
@@ -26,7 +26,7 @@ async function newUser(interaction, client) {
   } catch (err) {
     console.log(err);
   }
-*/
+
  
 const modal = new ModalBuilder()
 .setCustomId("userModal")
@@ -63,7 +63,7 @@ client.on(Events.InteractionCreate, interaction => {
     console.log(name, birthday)
 
     interaction.reply("thanks")
-    /*
+    
     let bdaySplit = birthday.split("/");
 
     try{
@@ -78,7 +78,7 @@ client.on(Events.InteractionCreate, interaction => {
     } catch(error){
       console.log(error)
     }
-*/
+
 
 })
 
