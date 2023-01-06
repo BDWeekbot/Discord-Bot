@@ -60,6 +60,8 @@ client.on(Events.InteractionCreate, interaction => {
     const name = interaction.fields.getTextInputValue("nameInput")
     const birthday = interaction.fields.getTextInputValue("birthdayInput")
 
+    console.log(name, birthday)
+    /*
     let bdaySplit = birthday.split("/");
 
     try{
@@ -74,7 +76,7 @@ client.on(Events.InteractionCreate, interaction => {
     } catch(error){
       console.log(error)
     }
-
+*/
 
 })
 
