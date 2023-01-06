@@ -61,25 +61,31 @@ client.on(Events.InteractionCreate, interaction => {
     const birthday = interaction.fields.getTextInputValue("birthdayInput")
 
     console.log(name, birthday)
-
-    interaction.reply("thanks")
-    
     let bdaySplit = birthday.split("/");
 
     try{
-      User.findByIdAndUpdate( user,
+      User.findByIdAndUpdate(
+        user,
         { name: name,
           birthday: {
             month: bdaySplit[0],
             day: bdaySplit[1],
             year: bdaySplit[2],
           },
-        })
+        },
+        function (err, docs) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Updated Message : ", docs);
+          }
+        }
+      )
     } catch(error){
       console.log(error)
     }
 
-
+    interaction.reply("thanks for submitting your info")
 })
 
 }
