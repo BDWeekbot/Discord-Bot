@@ -12,7 +12,7 @@ async function createNewMessage(message) {
     });
 
     message.channel.send(
-      `${message.content}, huh? Good Choice! After this post reaches 3 upvotes, I'll add it to next weeks poll! `
+      `${message.content}, huh? Good Choice! After your post reaches 3 upvotes, I'll add it to next weeks poll! `
     );
     pingDerek(message);
   } catch (err) {
