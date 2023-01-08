@@ -115,18 +115,6 @@ client.on("messageReactionAdd", async (reaction, user) => {
       reaction.message.channel.send(
         `${reaction.message.content} has been added to the poll`
       );
-      reaction.message.channel.send(`The current candidates are: `);
-
-      Message.find({ votes: { $gte: 3 } }, function (err, messages) {
-        /////////////////// Change to 3
-        if (err) {
-          console.log(err);
-        } else {
-          messages.forEach((message) => {
-            reaction.message.channel.send(message.content);
-          });
-        }
-      });
     }
   } else {
     console.log("trigger return - message reaction");

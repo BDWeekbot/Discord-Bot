@@ -1,3 +1,5 @@
+const { Archive, Message } = require("../models");
+
 function changeServerName(interaction, client) {
   const guildId = interaction.guildId;
   const channelId = interaction.channelId;
