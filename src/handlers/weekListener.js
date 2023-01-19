@@ -1,4 +1,5 @@
 const {Message} = require("../models");
+const {filterRepeatContent} = require("../functions/new-message")
 
 function WeekListener(client){
     client.on("messageCreate", (message) => {

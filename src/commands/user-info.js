@@ -7,7 +7,7 @@ module.exports = {
         .setDescription("adds or updates user in the Weekbot Database"),
     async execute(interaction, client){
       newUser(interaction, client)
-
+ 
      // console.log(interaction)
     },
 }

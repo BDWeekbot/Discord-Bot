@@ -90,16 +90,6 @@ client.on(Events.InteractionCreate, interaction => {
 
 }
 
-/*
-       _id: user, //.id
-        user: user,
-        name: fName, //.id
-        birthday: birthday, // 
-
-
-
-
-       */
 
 module.exports = { newUser };
 

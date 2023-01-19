@@ -32,8 +32,13 @@ const messageSchema = new mongoose.Schema({
 
    const eventSchema = new mongoose.Schema({
       _id: String,
+      clientId: String,
+      guildId: String,
+      channelId: String, 
       name: String, 
-      Date: String, // or date 
+      date: String,
+      description: String,
+      botText: String,// or date 
 
    }, {collection: "events"})
 
