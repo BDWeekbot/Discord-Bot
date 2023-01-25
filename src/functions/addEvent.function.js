@@ -30,10 +30,10 @@ async function addEvent(interaction, client) {
   let  announcement = interaction.options.getString('announcement')
 
 
-  console.log("interaction ID " + interaction)
+
   try {
     await Event.create({
-        _id: interaction, 
+        _id: interaction.id, 
         rsvp: [],
         guildId: guildId,
         channelId: channelId, 
@@ -68,7 +68,7 @@ async function addEvent(interaction, client) {
       { name: 'time', value: time },
       { name: '\u200B', value: '\u200B' },
       { name: "frequency", value: frequency, inline: true },
-      { name: 'annoucement', value: annoucnement, inline: true },
+      { name: 'annoucement', value: announcement, inline: true },
     )
     .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
     .setImage('https://i.imgur.com/AfFp7pu.png')
