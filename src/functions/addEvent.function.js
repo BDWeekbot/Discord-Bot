@@ -62,7 +62,7 @@ async function addEvent(interaction, client) {
     .setColor(0x0099FF)
     .setTitle(title)
     //.setURL('https://discord.js.org/')
-    .setAuthor({ name: user })
+    .setAuthor({ name: userUsername })
     .setDescription(description)
     .setThumbnail('https://i.imgur.com/AfFp7pu.png')
     .addFields(
@@ -82,7 +82,7 @@ async function addEvent(interaction, client) {
  
  
       channel.send({ embeds: [embed] });
-      interaction.reply(`user ${user} created ${title} event`)
+      
 }
 
 module.exports = { addEvent };
