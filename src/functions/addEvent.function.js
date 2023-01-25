@@ -20,6 +20,7 @@ async function addEvent(interaction, client) {
   const channel = client.channels.cache.get(`${channelId}`);
   const guild = client.guilds.cache.get(`${guildId}`);
   const user = interaction.user.id;
+  const userUsername = interaction.user.username
 
 
   const title = interaction.options.getString('title')
@@ -65,12 +66,13 @@ async function addEvent(interaction, client) {
     .setDescription(description)
     .setThumbnail('https://i.imgur.com/AfFp7pu.png')
     .addFields(
+      {name: "date", value: date},
+      { name: '\u200B', value: '\u200B' },
       { name: 'time', value: time },
       { name: '\u200B', value: '\u200B' },
       { name: "frequency", value: frequency, inline: true },
-      { name: 'annoucement', value: announcement, inline: true },
+      { name: '', value: announcement, inline: true },
     )
-    .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
     .setImage('https://i.imgur.com/AfFp7pu.png')
     .setTimestamp()
     .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
@@ -80,6 +82,7 @@ async function addEvent(interaction, client) {
  
  
       channel.send({ embeds: [embed] });
+      interaction.reply(`user ${user} created ${title} event`)
 }
 
 module.exports = { addEvent };
