@@ -1,11 +1,7 @@
 const { Event } = require("../models");
 
 const {
-  ActionRowBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-  Events,
+  EmbedBuilder
 } = require("discord.js");
 
 // might be easier to create web page to recieve event information
@@ -25,84 +21,65 @@ async function addEvent(interaction, client) {
   const guild = client.guilds.cache.get(`${guildId}`);
   const user = interaction.user.id;
 
-  console.log(clientId)
 
-  /*
-    try {
-        await Event.create({
-            id: interaction.id,
-            clientId: clientId, // no exist
-            guildId: guildId,
-            channelId: channelId, 
-            name: "", 
-            date: "",
-            description: "",
-            botText: "", //
-        });
-    
-        console.log(`user ${user} created`);
-      } catch (err) {
-        console.log(err);
-      }
- */
-  const eventModal = new ModalBuilder()
-    .setCustomId("eventModal")
-    .setTitle("Event Creation");
-
-  const eventTitle = new TextInputBuilder()
-    .setCustomId("eventTitle")
-    .setLabel("Event Title:")
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true);
-
-  const eventDate = new TextInputBuilder()
-    .setCustomId("eventDate")
-    .setLabel("Date:")
-    .setValue("MM/DD/YYYY")
-    .setStyle(TextInputStyle.Short)
-    .setRequired(true);
-
-  const eventDescription = new TextInputBuilder()
-    .setCustomId("eventDescription")
-    .setLabel("Event Description:")
-    .setStyle(TextInputStyle.Paragraph)
-    .setRequired(true);
-
-  const announcementText = new TextInputBuilder()
-    .setCustomId("announcementText")
-    .setLabel("Announcement Text:")
-    .setStyle(TextInputStyle.Short)
-    .setRequired(false);
-
-  const eventActionRowOne = new ActionRowBuilder().addComponents(eventTitle);
-  const eventActionRowTwo = new ActionRowBuilder().addComponents(eventDate);
-  const eventActionRowThree = new ActionRowBuilder().addComponents(eventDescription);
-  const eventActionRowFour = new ActionRowBuilder().addComponents(announcementText);
-
-  eventModal.addComponents(
-    eventActionRowOne,
-    eventActionRowTwo,
-    eventActionRowThree,
-    eventActionRowFour
-  );
-
-  await interaction.showModal(eventModal);
-
-  client.on(Events.InteractionCreate, interaction => {
-    if (!interaction.isModalSubmit()) return;
+  const title = interaction.options.getString('title')
+  const time = interaction.options.getString('time')
+  const date = interaction.options.getString('date')
+  const frequency = interaction.options.getString('frequency')
+  const description = interaction.options.getString('description')
+  let  announcement = interaction.options.getString('announcement')
 
 
-    console.log("Event Modal Action");
+  console.log("interaction ID " + interaction)
+  try {
+    await Event.create({
+        _id: interaction, 
+        rsvp: [],
+        guildId: guildId,
+        channelId: channelId, 
+        name: title, 
+        date: date,
+        time: time,
+        description: description,
+        botText: announcement, 
+    });
 
-    const title = interaction.fields.getTextInputValue("eventTitle");
-    const date = interaction.fields.getTextInputValue("eventTitle");
-    const description = interaction.fields.getTextInputValue("eventTitle");
-    const announcementText = interaction.fields.getTextInputValue("eventTitle");
+      // rsvp members by react ---- update array of user id's - edit embed with a list of rsvp'd members ?
 
+    console.log(`user ${user} created ${title} event`);
+  } catch (err) {
+    console.log("Mongo Event Submit Error: " , err);
+  }
 
-    interaction.reply(`${title} event created`);
+  if(announcement === null){
+    announcement = description
+  }
 
-  });
+  console.log(title, time, frequency, description, announcement)
+  
+  const embed = new EmbedBuilder()
+    .setColor(0x0099FF)
+    .setTitle(title)
+    //.setURL('https://discord.js.org/')
+    .setAuthor({ name: user })
+    .setDescription(description)
+    .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+    .addFields(
+      { name: 'time', value: time },
+      { name: '\u200B', value: '\u200B' },
+      { name: "frequency", value: frequency, inline: true },
+      { name: 'annoucement', value: annoucnement, inline: true },
+    )
+    .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+    .setImage('https://i.imgur.com/AfFp7pu.png')
+    .setTimestamp()
+    .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+     
+   
+ 
+ 
+      channel.send({ embeds: [embed] });
 }
 
 module.exports = { addEvent };

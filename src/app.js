@@ -29,14 +29,15 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-const { Archive, Message } = require("./models.js");
-const { filterRepeatContent } = require("./functions/new-message");
+
 
 
 const { eventModule } = require("./events/events");
+const { autocompleteHandler } = require("./handlers/autocomplete.handler");
 const {Commandler} = require("./handlers/commandler")
 const {menuTree} = require("./handlers/menu.handler")
 const {WeekListener} = require("./handlers/weekListener")
+
 
 // load .env for keys
 require("dotenv").config();
@@ -50,6 +51,8 @@ client.on("ready", function () {
   Commandler(client) // message + reaction handler
   menuTree(client)
   WeekListener(client)
+  autocompleteHandler(client)
+ 
    // instantiate events on application load
   // pollModule() -- not built - instantiate message listeners
   

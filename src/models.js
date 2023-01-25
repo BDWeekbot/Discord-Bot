@@ -32,13 +32,19 @@ const messageSchema = new mongoose.Schema({
 
    const eventSchema = new mongoose.Schema({
       _id: String,
-      clientId: String,
+      rsvp: Array,
       guildId: String,
       channelId: String, 
       name: String, 
       date: String,
+      time: String,
       description: String,
       botText: String,// or date 
+
+     
+      // rsvp members by react ---- update array of user id's - edit embed with a list of rsvp'd members ?
+
+  
 
    }, {collection: "events"})
 

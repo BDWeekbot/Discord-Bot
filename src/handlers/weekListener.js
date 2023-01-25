@@ -4,7 +4,7 @@ const {filterRepeatContent} = require("../functions/new-message")
 function WeekListener(client){
     client.on("messageCreate", (message) => {
 
-        console.log(message)
+       
       
         const msgArray = message.content.split(" ");
         if (message.channel.name === "week-name" && !message.author.bot) {
