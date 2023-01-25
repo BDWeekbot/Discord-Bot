@@ -16,7 +16,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("date")
-        .setDescription("DD/MM/YYYY")
+        .setDescription("MM/DD/YYYY")
         .setRequired(true))
     .addStringOption((option) =>
       option
