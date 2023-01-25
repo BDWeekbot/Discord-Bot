@@ -71,7 +71,7 @@ async function addEvent(interaction, client) {
       { name: 'time', value: time },
       { name: '\u200B', value: '\u200B' },
       { name: "frequency", value: frequency, inline: true },
-      { name: '', value: announcement, inline: true },
+      { name: ' ', value: announcement, inline: true },
     )
     .setImage('https://i.imgur.com/AfFp7pu.png')
     .setTimestamp()
