@@ -36,7 +36,11 @@ const messageSchema = new mongoose.Schema({
       guildId: String,
       channelId: String, 
       name: String, 
-      date: String,
+      date: {
+        month: String,
+        day: String,
+        year: String,
+      },
       time: String,
       description: String,
       botText: String,// or date 

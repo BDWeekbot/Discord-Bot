@@ -25,12 +25,13 @@ async function addEvent(interaction, client) {
 
   const title = interaction.options.getString('title')
   const time = interaction.options.getString('time')
-  const date = interaction.options.getString('date')
+  const dateInput = interaction.options.getString('date')
   const frequency = interaction.options.getString('frequency')
   const description = interaction.options.getString('description')
   let  announcement = interaction.options.getString('announcement')
 
-
+ // work on setting dates date object format
+  let date = dateInput.split("/") // MM / DD / YYYY
 
   try {
     await Event.create({
@@ -39,7 +40,11 @@ async function addEvent(interaction, client) {
         guildId: guildId,
         channelId: channelId, 
         name: title, 
-        date: date,
+        date: {
+          month: date[0],
+          day: date[1],
+          year: date[2],
+        },
         time: time,
         description: description,
         botText: announcement, 
@@ -56,7 +61,7 @@ async function addEvent(interaction, client) {
     announcement = description
   }
 
-  console.log(title, time, frequency, description, announcement)
+
   
   const embed = new EmbedBuilder()
     .setColor(0x0099FF)
@@ -66,7 +71,7 @@ async function addEvent(interaction, client) {
     .setDescription(description)
     .setThumbnail('https://i.imgur.com/AfFp7pu.png')
     .addFields(
-      {name: "date", value: date},
+      {name: "date", value: dateInput},
       { name: '\u200B', value: '\u200B' },
       { name: 'time', value: time },
       { name: '\u200B', value: '\u200B' },
@@ -79,8 +84,9 @@ async function addEvent(interaction, client) {
 
      
    
- 
- 
+      
+
+      
       channel.send({ embeds: [embed] });
       
 }

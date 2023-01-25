@@ -31,9 +31,11 @@ module.exports = {
         .setDescription("how often the event happens")
         .setRequired(true)
         .addChoices(
-          { name: "once", value: "once" },
+          { name: "Once", value: "Once" },
           { name: "Daily", value: "Daily" },
-          { name: "Weekly", value: "Monthly" }
+          { name: "Weekly", value: "Weekly" },
+          { name: "Monthly", value: "Monthly" },
+          { name: "Annually", value: "Annually" },
         )
     )
     .addStringOption((option) =>
@@ -50,6 +52,7 @@ module.exports = {
   async autocomplete(interaction) {
     const focusedValue = interaction.options.getFocused();
     const choices = timeArray;
+   
     let filtered = choices.filter((choice) =>
       choice.name.includes(focusedValue)
     );
@@ -65,7 +68,7 @@ module.exports = {
   // title date time description annoucnement
   // translate data to an embed builder
   async execute(interaction, client) {
-      console.log(interaction)
-      addEvent(interaction, client)
+      addEvent(interaction, client);
+     // interaction.reply(`${interaction.user.username} created event`)
   },
 };

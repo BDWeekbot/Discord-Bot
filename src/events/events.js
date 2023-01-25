@@ -17,13 +17,18 @@ function eventModule() {
   let fDate = new Date();
   let date = convertDate(fDate);
 
+  console.log(date)
+  console.log(fDate.toTimeString())
   function convertDate(date) {
     let month = String(date.getMonth() + 1);
     let day = String(date.getDate());
     let year = String(date.getFullYear());
+    let hours = String(date.getHours());
+    let seconds = String(date.getSeconds())
+    
 
     //return (`${month}/${day}/${year}`)
-    return { month: month, day: day, year: year };
+    return { month: month, day: day, year: year, hours: hours, seconds: seconds};
   }
 
   function checkTime() {
@@ -37,15 +42,17 @@ function eventModule() {
     return formatDate;
     
   }
-
-
+  
+// search db events for date - time that matches current date time, post event -Delete: once: delete event, Update: daily: day+1, weekly: day+7 (wrap 30), monthly: month +1 yearly: year + 1
 
   // to do - modulate functions, gather client channel info, post to channel on birthday
 
   setInterval(() => {
+    
     checkTime();
     Birthday(date);
-  }, 43200000); //  8640,0000 = 1 Day
+  }, 30000);
+   //  8640,0000 = 1 Day
 }
 
 module.exports = { eventModule };
