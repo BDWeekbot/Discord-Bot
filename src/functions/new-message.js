@@ -1,6 +1,5 @@
 const { Archive, Message } = require("../models");
-const {setPollArray} =require("../store/poll/poll.action")
-const {store} = require("../store/store")
+
 
 async function createNewMessage(message) {
   // update store with poll array

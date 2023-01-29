@@ -33,7 +33,7 @@ const client = new Client({
 // USE REDUX TO INITIALIZE STATE MANAGEMENT
 
 const { eventModule } = require("./events/events");
-const { pingDerek } = require("./functions/pingDerek");
+
 const { autocompleteHandler } = require("./handlers/autocomplete.handler");
 const {Commandler} = require("./handlers/commandler")
 const {menuTree} = require("./handlers/menu.handler")
