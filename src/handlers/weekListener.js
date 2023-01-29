@@ -4,11 +4,11 @@ const {filterRepeatContent} = require("../functions/new-message")
 function WeekListener(client){
     client.on("messageCreate", (message) => {
 
-       
+       // doesnt responsd to edited messages
       
         const msgArray = message.content.split(" ");
         if (message.channel.name === "week-name" && !message.author.bot) {
-          if (msgArray[msgArray.length - 1].toLowerCase() === "week") {
+          if (msgArray[msgArray.length - 1].toLowerCase() === "week" || msgArray[msgArray.length - 1].toLowerCase() === "week.") {
             filterRepeatContent(message);
           }
         } else {

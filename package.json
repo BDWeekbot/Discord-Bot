@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
     "discord.js": "^14.3.0",
     "dotenv": "^16.0.2",
     "mongodb": "^4.10.0",
-    "mongoose": "^6.6.3"
+    "mongoose": "^6.6.3",
+    "redux": "^4.2.0"
   }
 }

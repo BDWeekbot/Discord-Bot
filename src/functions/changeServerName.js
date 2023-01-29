@@ -13,6 +13,7 @@ function changeServerName(interaction, client) {
     "Well anyway....Here's your poll for this week... The first week below to reach 4 votes wins"
   );
   /// here we create a button or modal for each option
+  
 
   try {
     Message.find({ votes: { $gte: 3 } }, function (err, messages) {

@@ -50,6 +50,7 @@ module.exports = {
         .setDescription("how weekbot announces the event")
     ),
   async autocomplete(interaction) {
+    console.log(interaction);
     const focusedValue = interaction.options.getFocused();
     const choices = timeArray;
    
@@ -70,5 +71,7 @@ module.exports = {
   async execute(interaction, client) {
       addEvent(interaction, client);
      // interaction.reply(`${interaction.user.username} created event`)
+
+     
   },
 };

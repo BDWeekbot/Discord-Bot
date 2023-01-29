@@ -30,9 +30,10 @@ const client = new Client({
 });
 
 
-
+// USE REDUX TO INITIALIZE STATE MANAGEMENT
 
 const { eventModule } = require("./events/events");
+const { pingDerek } = require("./functions/pingDerek");
 const { autocompleteHandler } = require("./handlers/autocomplete.handler");
 const {Commandler} = require("./handlers/commandler")
 const {menuTree} = require("./handlers/menu.handler")
@@ -47,10 +48,10 @@ require("dotenv").config();
 client.on("ready", function () {
   console.log("Connected as " + client.user.tag);
   client.user.setActivity("DEREK", { type: "WATCHING" });
-  //eventModule();
-  Commandler(client) // message + reaction handler
-  menuTree(client)
-  WeekListener(client)
+  eventModule();
+  Commandler(client); // message + reaction handler
+  menuTree(client);
+  WeekListener(client);
   autocompleteHandler(client)
  
    // instantiate events on application load

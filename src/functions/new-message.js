@@ -1,7 +1,10 @@
 const { Archive, Message } = require("../models");
-const { pingDerek } = require("./pingDerek");
+const {setPollArray} =require("../store/poll/poll.action")
+const {store} = require("../store/store")
 
 async function createNewMessage(message) {
+  // update store with poll array
+
   try {
     await Message.create({
       _id: message.id, //.id
