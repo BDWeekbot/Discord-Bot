@@ -48,7 +48,7 @@ require("dotenv").config();
 client.on("ready", function () {
   console.log("Connected as " + client.user.tag);
   client.user.setActivity("DEREK", { type: "WATCHING" });
-  eventModule();
+  eventModule(client);
   Commandler(client); // message + reaction handler
   menuTree(client);
   WeekListener(client);
