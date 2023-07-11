@@ -17,5 +17,8 @@
     "mongodb": "^4.10.0",
     "mongoose": "^6.6.3",
     "redux": "^4.2.0"
+  },
+  "devDependencies": {
+    "prettier": "3.0.0"
   }
 }

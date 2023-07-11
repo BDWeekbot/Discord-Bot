@@ -1,6 +1,5 @@
 const { Archive, Message } = require("../models");
 
-
 async function createNewMessage(message) {
   // update store with poll array
 
@@ -14,9 +13,8 @@ async function createNewMessage(message) {
     });
 
     message.channel.send(
-      `${message.content}, huh? Good Choice! After your post reaches 3 upvotes, I'll add it to next weeks poll! `
+      `${message.content}, huh? Good Choice! After your post reaches 3 upvotes, I'll add it to next weeks poll! `,
     );
-    
   } catch (err) {
     console.log(err);
   }
@@ -30,7 +28,7 @@ function filterRepeatContent(message) {
       console.log("message messages.length ", messages.length);
       console.log("trigger return - duplicate message");
       message.channel.send(
-        "Sorry, this suggestion has already been submitted this week"
+        "Sorry, this suggestion has already been submitted this week",
       );
       return;
     } else {
@@ -41,7 +39,7 @@ function filterRepeatContent(message) {
           console.log("archive messages.length ", messages.length);
           console.log("trigger return - duplicate message");
           message.channel.send(
-            "Sorry, this suggestion was submitted last week"
+            "Sorry, this suggestion was submitted last week",
           );
           return;
         } else {

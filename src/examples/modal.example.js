@@ -25,7 +25,7 @@ async function addEvent(interaction, client) {
   const guild = client.guilds.cache.get(`${guildId}`);
   const user = interaction.user.id;
 
-  console.log(clientId)
+  console.log(clientId);
 
   /*
     try {
@@ -76,21 +76,24 @@ async function addEvent(interaction, client) {
 
   const eventActionRowOne = new ActionRowBuilder().addComponents(eventTitle);
   const eventActionRowTwo = new ActionRowBuilder().addComponents(eventDate);
-  const eventActionRowThree = new ActionRowBuilder().addComponents(eventDescription);
-  const eventActionRowFour = new ActionRowBuilder().addComponents(announcementText);
+  const eventActionRowThree = new ActionRowBuilder().addComponents(
+    eventDescription,
+  );
+  const eventActionRowFour = new ActionRowBuilder().addComponents(
+    announcementText,
+  );
 
   eventModal.addComponents(
     eventActionRowOne,
     eventActionRowTwo,
     eventActionRowThree,
-    eventActionRowFour
+    eventActionRowFour,
   );
 
   await interaction.showModal(eventModal);
 
-  client.on(Events.InteractionCreate, interaction => {
+  client.on(Events.InteractionCreate, (interaction) => {
     if (!interaction.isModalSubmit()) return;
-
 
     console.log("Event Modal Action");
 
@@ -99,9 +102,7 @@ async function addEvent(interaction, client) {
     const description = interaction.fields.getTextInputValue("eventTitle");
     const announcementText = interaction.fields.getTextInputValue("eventTitle");
 
-
     interaction.reply(`${title} event created`);
-
   });
 }
 
