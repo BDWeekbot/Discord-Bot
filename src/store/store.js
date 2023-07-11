@@ -1,32 +1,32 @@
-const { createSlice, configureStore } = require('@reduxjs/toolkit');
-const {convertDate} = require("../functions/convertDate")
+const { createSlice, configureStore } = require("@reduxjs/toolkit");
+const { convertDate } = require("../functions/convertDate");
 
 //STATUS
 //
-// date persists - expand state 
+// date persists - expand state
 // ping mongo on value of 20? and reset counter
 
 const counterSlice = createSlice({
-  name: 'counter',
+  name: "counter",
   initialState: {
     date: {},
   },
   reducers: {
-    dates: state => {
-      let nDate = new Date;
-      state.date = convertDate(nDate)
-    }
-  }
-})
+    dates: (state) => {
+      let nDate = new Date();
+      state.date = convertDate(nDate);
+    },
+  },
+});
 
-const { incremented, decremented, dates } = counterSlice.actions
+const { incremented, decremented, dates } = counterSlice.actions;
 
 const store = configureStore({
-  reducer: counterSlice.reducer
-})
+  reducer: counterSlice.reducer,
+});
 
 // Can still subscribe to the store
-store.subscribe(() => console.log(store.getState()))
+store.subscribe(() => console.log(store.getState()));
 
 // // Still pass action objects to `dispatch`, but they're created for us
 // store.dispatch(incremented())
@@ -36,4 +36,4 @@ store.subscribe(() => console.log(store.getState()))
 // store.dispatch(decremented())
 // // {value: 1}
 
-module.exports = {store, incremented, decremented, dates}
+module.exports = { store, incremented, decremented, dates };

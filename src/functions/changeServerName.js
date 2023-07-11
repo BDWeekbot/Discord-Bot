@@ -10,10 +10,9 @@ function changeServerName(interaction, client) {
   //console.log(channel)
   console.log(guild);
   channel.send(
-    "Well anyway....Here's your poll for this week... The first week below to reach 4 votes wins"
+    "Well anyway....Here's your poll for this week... The first week below to reach 4 votes wins",
   );
   /// here we create a button or modal for each option
-  
 
   try {
     Message.find({ votes: { $gte: 3 } }, function (err, messages) {
@@ -64,10 +63,10 @@ function changeServerName(interaction, client) {
 
       setTimeout(() => {
         channel.send(
-          "Hello, I am now accepting suggestions for next weeks name"
+          "Hello, I am now accepting suggestions for next weeks name",
         );
         channel.send(
-          "Your suggestion must end in 'week' and must recieve at least 3 reacts to be entered into the next Poll"
+          "Your suggestion must end in 'week' and must recieve at least 3 reacts to be entered into the next Poll",
         );
         channel.send("Good Luck! ");
       }, "1000");

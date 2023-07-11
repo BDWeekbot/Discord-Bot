@@ -1,9 +1,5 @@
-const {SlashCommandBuilder} = require("discord.js")
-const {changeServerName} = require("../functions/changeServerName")
-  
-      
-
-
+const { SlashCommandBuilder } = require("discord.js");
+const { changeServerName } = require("../functions/changeServerName");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,29 +17,22 @@ module.exports = {
         if (date.getDay() === 1) {
           console.log(date.getDay());
           interaction.reply(
-            "*YAAAWN*... What? Monday? How long is a week again?"
+            "*YAAAWN*... What? Monday? How long is a week again?",
           );
         } else {
           console.log(date.getDay());
           interaction.reply(
-            "*YAAAWN*... Is it that time of the week again already?"
+            "*YAAAWN*... Is it that time of the week again already?",
           );
         } // install day switch?
 
-         
         // run poll
         changeServerName(interaction, client);
-        
-    
       } else {
         console.log("return trigger - wrong day - not sunday or monday");
         interaction.reply("This service only works on Sundays, Sorry");
         return;
       }
-      
     }
-    
   },
 };
-
-
