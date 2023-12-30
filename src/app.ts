@@ -2,12 +2,14 @@ import {client} from "./client.js"
 import { Commandler } from "./handlers/commandler.js";
 import { ActivityType } from "discord.js";
 import mongoose from "mongoose";
+import { WeekListener } from "./handlers/weekListener.js";
 
 
 client.on("ready", function () {
     console.log("Connected as " + client.user?.tag);
     client.user?.setActivity("Derek", { type: ActivityType.Watching });
     Commandler(client); // message + reaction handler
+    WeekListener(client);
    
     // a pollactivecheck
     // instantiate events on application load
