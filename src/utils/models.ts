@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
-interface IMessage extends Document {
+export interface IMessage extends Document {
   _id: string;
   channelID: string;
   votes: number;

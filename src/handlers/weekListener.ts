@@ -1,5 +1,5 @@
 import { Message, PartialMessage, MessageReaction, User, Client, Events, PartialMessageReaction, PartialUser, GuildTextBasedChannel} from "discord.js";
-//import  {filterRepeatContent}  from "../functions/messages/newMessage.js";
+import  {filterRepeatContent}  from "../functions/messages/newMessage.js";
 import { Message as messageObj } from "../utils/models.js";
 
 export function WeekListener(client: Client) {
@@ -18,7 +18,7 @@ export function WeekListener(client: Client) {
       (msgArray[msgArray.length - 1].toLowerCase() === "week" ||
         msgArray[msgArray.length - 1].toLowerCase() === "week.")
     ) {
-      //filterRepeatContent(message);
+      filterRepeatContent(message);
       console.log("message.content ", message.content);
     } else {
       
@@ -46,7 +46,7 @@ export function WeekListener(client: Client) {
           message.votes += 1;
           await message.save();
           console.log("message.votes ", message.votes);
-          
+
           if (message.votes === 3) {
             const msg = await messageObj.findOne({
               _id: message._id,
