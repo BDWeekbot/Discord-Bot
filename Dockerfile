@@ -9,4 +9,4 @@ RUN "npm" "install"
 
 RUN npm run build
 
-ENTRYPOINT [ "node", "app/dist/app.js" ]
+ENTRYPOINT [ "node", "dist/app.js" ]
