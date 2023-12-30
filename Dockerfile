@@ -3,7 +3,7 @@ FROM node:18-alpine as base
 RUN "mkdir" "-p" "/app"
 
 COPY . /app
-WORKDIR /dist
+WORKDIR /app
 
 RUN "npm" "install"
 
