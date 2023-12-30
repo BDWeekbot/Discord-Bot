@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
 export async function  Commandler(client: Client){
-    console.log("commandler")
+  
     client.commands = new Collection();
 
     const commandsPath = path.join(__dirname, "../commands");
@@ -16,8 +16,6 @@ export async function  Commandler(client: Client){
     .readdirSync(commandsPath)
     .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
 
-    console.log(commandFiles);
-    console.log("commandler")
     for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = await import(filePath);
