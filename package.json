@@ -10,7 +10,7 @@
     "live": "nodemon src/dist/app.js",
     "build": "tsc",
     "deploy-command": "nodemon --config nodemon.json src/setCommands.ts",
-    "dc-live": "src/dist/setCommands.js"
+    "dc-live": "dist/setCommands.js"
   },
   "keywords": [],
   "author": "",
