@@ -20,9 +20,9 @@ const guildId: string = ENVguildId!;
 
 
 const commands: any[] = [];
-// Grab all the command files from the commands directory you created earlier
-const commandFiles: string[] = await fs.readdir('./src/commands').then(files => files.filter(file => file.endsWith('.js') ));
-
+// Grab all the command files from the commands directory
+const commandFiles: string[] = await fs.readdir('./dist/commands').then(files => files.filter(file => file.endsWith('.js') || file.endsWith('.ts')));
+console.log(commandFiles)
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
   const command = await import(`./commands/${file}`);
