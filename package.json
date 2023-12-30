@@ -1,24 +1,31 @@
 {
-  "name": "discord-bot",
+  "name": "server-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "./dist/app.js",
+  "exports": "./dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "deploy-command": "node src/deploy-commands"
+    "start": "node .",
+    "dev": "nodemon --config nodemon.json src/app.ts",
+    "live": "nodemon src/dist/app.js",
+    "build": "tsc",
+    "deploy-command": "nodemon --config nodemon.json src/setCommands.ts"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@reduxjs/toolkit": "^1.9.1",
-    "discord.js": "^14.3.0",
-    "dotenv": "^16.0.2",
-    "mongodb": "^4.10.0",
-    "mongoose": "^6.6.3",
-    "redux": "^4.2.0"
-  },
   "devDependencies": {
-    "prettier": "3.0.0"
+    "@types/node": "^20.6.3",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.3",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">16.0.0"
   }
 }

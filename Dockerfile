@@ -1,10 +1,12 @@
-FROM node:18-alpine
+FROM node:18-alpine as base
 
 RUN "mkdir" "-p" "/app"
 
 COPY . /app
-WORKDIR /app
+WORKDIR /dist
 
 RUN "npm" "install"
 
-ENTRYPOINT [ "node", "/app/src/app.js" ]
+RUN npm run build
+
+ENTRYPOINT [ "node", "/dist/app.js" ]
