@@ -9,6 +9,7 @@ RUN "npm" "install"
 
 RUN npm run build
 
+RUN chmod +x dist/setCommands.js
 RUN npm run dc-live
 
 ENTRYPOINT [ "node", "dist/app.js" ]
