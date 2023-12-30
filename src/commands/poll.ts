@@ -11,7 +11,8 @@ export default{
       
         if (date.getDay() === 0 ||date.getDay() === 1 || date.getDay() === 6){
             console.log("poll")
-            //await interaction.channel?.send('Starting the 39\' 3/4\" Poll')
+            await interaction.channel?.send('Starting the 39\' 3/4\" Poll')
+            await interaction.channel?.send('@everyone The Poll will be open for 24 hours')
             changeServerName(interaction, client)
         }
 

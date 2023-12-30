@@ -114,11 +114,11 @@ export async function changeServerName(
 
     const buttonCollector = channel.createMessageComponentCollector({
       componentType: ComponentType.Button,
-      time: 30000,
+      time: 86400000,
     });
 
     const messageCollector = channel.createMessageCollector({
-      time: 25000,
+      time: 86400000,
     })
 
     messageCollector.on("collect", async (message) => {
@@ -164,7 +164,7 @@ export async function changeServerName(
 
     commandInteraction.reply({
       content:
-        " Please make 3 selections for the Week Name Poll (Ranked Choice Voting)",
+        " Please make a selection for the Week Name Poll",
       components: [primaryActionRow, submitButtonRow],
     }); // secondaryActionRow, tertiaryActionRow,
     console.log("command interaction reply");

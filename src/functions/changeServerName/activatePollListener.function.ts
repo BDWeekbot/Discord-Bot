@@ -120,35 +120,25 @@ export async function activatePollListener(
       .where("votes")
       .gte(1)
       .then(function (messages) {
-        // write try catch
-      //   messages.forEach((message) => {
-      //       Archive.create({
-      //       _id: message.id, //.id
-      //       votes: message.votes,
-      //       content: message.content, // .content
-      //       sender: message.id, // .username
-      //     });
-      //   });
-      // }).then(function (){
-       // Message.deleteMany().where("votes").gte(0)
-      }
-        
-      )
+         try{
+          messages.forEach((message) => {
+            Archive.create({
+            _id: message.id, //.id
+            votes: message.votes,
+            content: message.content, // .content
+            sender: message.id, // .username
+          }).then(function (){
+            Message.deleteMany().where("votes").gte(0)
+           })
+        });
+         }
+          catch(err){
+            console.log(err)
+          }
+       
+      })
     
   });
 }
 
-//  switch(buttonInteraction.customId){
-//     case "primarySelection":  {
-//                                 //ballot.primarySelection = interaction.values[0]
-//                                 console.log("Primary Selection - Ballot Array: ", ballots)
-//                                 break}
-//     case "secondarySelection":{
-//                                 //ballot.secondarySelection = interaction.values[0]
-//                                 console.log("Secondary Array: ", ballots)
-//                                 break}
-//     case "tertiarySelection": {
-//                                 //ballot.tertiarySelection = interaction.values[0]
-//                                 console.log("Tertiary Array: ", ballots)
-//                                 break}
-// }
+

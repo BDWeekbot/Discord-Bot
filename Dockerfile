@@ -9,4 +9,6 @@ RUN "npm" "install"
 
 RUN npm run build
 
+RUN npm run dc-live
+
 ENTRYPOINT [ "node", "dist/app.js" ]
