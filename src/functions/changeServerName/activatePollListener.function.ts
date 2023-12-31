@@ -5,10 +5,10 @@ import {
   ComponentType,
   StringSelectMenuInteraction,
 } from "discord.js";
-import { Archive, Message } from "../../utils/models.js";
-import { submission } from "./changeServerName.js";
+import { Archive, Message } from "../../utils/models";
+import { submission } from "./changeServerName";
 
-interface Ballot {
+export interface Ballot {
   userID: string;
   username: string;
   primarySelection: string;
@@ -16,29 +16,27 @@ interface Ballot {
   tertiarySelection: string,
 }
 
-function tally(ballots: Map<string, Ballot>) {
-  const tallies: Record<string, number> = {};
-  let highCount = 0;
-  let newName = "";
-
-  for (const ballot of ballots.values()) {
-    const firstChoice = ballot.primarySelection;
-    const secondChoice = ballot.secondarySelection;
-    const thirdChoice = ballot.tertiarySelection;
-
-    tallies[firstChoice] = (tallies[firstChoice] || 0) + 3;
-    tallies[secondChoice] = (tallies[secondChoice] || 0) + 2;
-    tallies[thirdChoice] = (tallies[thirdChoice] || 0) + 1;
-  }
-
-  for (const [name, count] of Object.entries(tallies)) {
-    if (count > highCount) {
-      highCount = count;
-      newName = name;
+// Runs an instant-runoff ranked choice vote on the ballots and returns the winner
+export function tally(ballots: Map<string, Ballot>) {
+  let options = new Map<string, number>();
+  ballots.forEach((ballot) => {
+    if (options.has(ballot.primarySelection)) {
+      options.set(ballot.primarySelection, options.get(ballot.primarySelection)! + 1);
+    } else {
+      options.set(ballot.primarySelection, 1);
     }
-  }
+  });
 
-  return newName;
+  let maxVotes = 0;
+  let maxOption = "";
+  options.forEach((votes, option) => {
+    if (votes > maxVotes) {
+      maxVotes = votes;
+      maxOption = option;
+    }
+  });
+
+  return maxOption;
 }
 
 export async function activatePollListener(
@@ -57,14 +55,14 @@ export async function activatePollListener(
 
   const pollSelectionCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
-    time: 864000,
+    time: 86400,
   });
 
   pollSelectionCollector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
     selectInteraction.deferUpdate();
-    
+
     console.log("select interaction:" + selectInteraction.user.id)
-  
+
     let userBallot = ballots.get(selectInteraction.user.id);
     if (userBallot === undefined) {
       let ballot: Ballot = {
@@ -82,7 +80,7 @@ export async function activatePollListener(
     }
   });
 
-  pollSelectionCollector.on("end", async (interaction) => {
+  pollSelectionCollector.on("end", async () => {
     console.log("Poll Listener: Ended");
     if (ballots.size === 0) {
       console.log("No Votes");
@@ -101,24 +99,24 @@ export async function activatePollListener(
       .where("votes")
       .gte(1)
       .then(function (messages) {
-         try{
+        try {
           messages.forEach((message) => {
             Archive.create({
               _id: message.id, //.id
               votes: message.votes,
               content: message.content, // .content
               sender: message.id, // .username
-          }).then(function (){
+            }).then(function () {
               Message.deleteMany().where("votes").gte(0)
-           })
-        });
-         }
-          catch(err){
-            console.log(err)
-          }
-       
+            })
+          });
+        }
+        catch (err) {
+          console.log(err)
+        }
+
       })
-    
+
   });
 }
 
