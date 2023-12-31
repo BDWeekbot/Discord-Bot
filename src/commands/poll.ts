@@ -30,7 +30,6 @@ export default{
   .setDescription("Starts the community poll to change the guilds name"),
   async execute(interaction: ChatInputCommandInteraction, client: Client){
       let date: Date = new Date()
-      
       let pollOptions = await getPollOptions()
     
       if (date.getDay() === 0 ||date.getDay() === 1 || date.getDay() === 6){
@@ -38,9 +37,7 @@ export default{
           await interaction.channel?.send('Starting the 39\' 3/4\" Poll')
           await interaction.channel?.send('The Poll will be open for 24 hours')
           changeServerName(interaction, client, pollOptions)
-      }
-
-      else{
+      } else {
           interaction.reply('Sorry, the poll is only open on Sundays, Mondays, and Thursdays')
       }
   }

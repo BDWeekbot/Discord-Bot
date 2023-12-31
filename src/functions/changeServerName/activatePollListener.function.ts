@@ -23,11 +23,11 @@ function tally(ballots: Map<string, Ballot>) {
 
   for (const ballot of ballots.values()) {
     const firstChoice = ballot.primarySelection;
-    const secondChoid = ballot.secondarySelection;
+    const secondChoice = ballot.secondarySelection;
     const thirdChoice = ballot.tertiarySelection;
 
     tallies[firstChoice] = (tallies[firstChoice] || 0) + 3;
-    tallies[secondChoid] = (tallies[secondChoid] || 0) + 2;
+    tallies[secondChoice] = (tallies[secondChoice] || 0) + 2;
     tallies[thirdChoice] = (tallies[thirdChoice] || 0) + 1;
   }
 
@@ -75,6 +75,10 @@ export async function activatePollListener(
         tertiarySelection: selectInteraction.values[2],
       };
       ballots.set(selectInteraction.user.id, ballot);
+    } else {
+      userBallot.primarySelection = selectInteraction.values[0];
+      userBallot.secondarySelection = selectInteraction.values[1];
+      userBallot.tertiarySelection = selectInteraction.values[2];
     }
   });
 

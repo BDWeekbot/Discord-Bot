@@ -50,7 +50,7 @@ export async function changeServerName(
 
   console.log("week names ")
  
-  const ballotBox = new Array<any>();
+  const ballotBox = new Array<ActionRowBuilder<StringSelectMenuBuilder> | ActionRowBuilder<ButtonBuilder>>;
 
   const primarySelect: StringSelectMenuBuilder = new StringSelectMenuBuilder()
     .setCustomId("primarySelection")
@@ -78,7 +78,6 @@ export async function changeServerName(
   const submitButtonRow =     new ActionRowBuilder<ButtonBuilder>().addComponents(submitButton);
 
   ballotBox.push(primaryActionRow, secondaryActionRow, tertiaryActionRow, submitButtonRow)
-
 
   const buttonCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.Button,
