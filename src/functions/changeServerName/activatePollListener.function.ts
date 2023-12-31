@@ -1,113 +1,90 @@
 import {
-  Channel,
   Guild,
   Client,
-  Collector,
-  Events,
-  Interaction,
   TextChannel,
   ComponentType,
   StringSelectMenuInteraction,
-  ButtonInteraction,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ChatInputCommandInteraction,
 } from "discord.js";
-import { Archive, Message, IsPollActive } from "../../utils/models.js";
+import { Archive, Message } from "../../utils/models.js";
 import { submission } from "./changeServerName.js";
 
 interface Ballot {
   userID: string;
   username: string;
   primarySelection: string;
-  // secondarySelection: string,
-  // tertiarySelection: string,
+  secondarySelection: string,
+  tertiarySelection: string,
 }
 
-function tally(array: Array<Ballot>) {
+function tally(ballots: Map<string, Ballot>) {
   const tallies: Record<string, number> = {};
   let highCount = 0;
   let newName = "";
 
-  for (const { primarySelection } of array) {
-    tallies[primarySelection] = (tallies[primarySelection] || 0) + 1;
+  for (const ballot of ballots.values()) {
+    const firstChoice = ballot.primarySelection;
+    const secondChoid = ballot.secondarySelection;
+    const thirdChoice = ballot.tertiarySelection;
+
+    tallies[firstChoice] = (tallies[firstChoice] || 0) + 3;
+    tallies[secondChoid] = (tallies[secondChoid] || 0) + 2;
+    tallies[thirdChoice] = (tallies[thirdChoice] || 0) + 1;
   }
 
-  for (const [selection, count] of Object.entries(tallies)) {
+  for (const [name, count] of Object.entries(tallies)) {
     if (count > highCount) {
       highCount = count;
-      newName = selection;
+      newName = name;
     }
   }
+
   return newName;
 }
 
 export async function activatePollListener(
-  commandInteraction: ChatInputCommandInteraction,
   client: Client,
   guildId: String,
   channelId: String,
   submissionArray: Array<submission>
 ) {
   console.log("Poll Listener: Active");
-  const guild = (await client.guilds.cache.get(`${guildId}`)) as Guild;
-  const channel = (await client.channels.cache.get(
+  const guild = client.guilds.cache.get(`${guildId}`) as Guild;
+  const channel = client.channels.cache.get(
     `${channelId}`
-  )) as TextChannel;
+  ) as TextChannel;
 
-  let ballots = new Array<Ballot>();
+  let ballots = new Map<string, Ballot>();
 
-  
-
-  const collector = channel.createMessageComponentCollector({
+  const pollSelectionCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
     time: 864000,
   });
 
-  collector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
+  pollSelectionCollector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
     selectInteraction.deferUpdate();
     
     console.log("select interaction:" + selectInteraction.user.id)
-    let ballot: Ballot;
-
-    let ballotFilter = ballots.filter(
-      (ballot) => ballot.userID === selectInteraction.user.id
-    );
-
-
-    if (
-      ballots.filter((ballot) => ballot.userID === selectInteraction.user.id)
-        .length > 0
-    ) {
-      ballot = ballotFilter[0];
-      console.log("if : " + ballot.username + ballot.primarySelection);
-      console.log("ballotFilter " + ballot.username + ballotFilter[0].primarySelection);
-      ballot.primarySelection = selectInteraction.values[0];
-      let ballotIndex = ballots.indexOf(ballot);
-      ballots[ballotIndex] = ballot;
-    } else {
-      ballot = {
+  
+    let userBallot = ballots.get(selectInteraction.user.id);
+    if (userBallot === undefined) {
+      let ballot: Ballot = {
         userID: selectInteraction.user.id,
         username: selectInteraction.user.displayName,
         primarySelection: selectInteraction.values[0],
-        // secondarySelection: "string",
-        // tertiarySelection: "string"
+        secondarySelection: selectInteraction.values[1],
+        tertiarySelection: selectInteraction.values[2],
       };
-      
-      console.log("else : " + ballot.primarySelection);
-      ballots.push(ballot);
+      ballots.set(selectInteraction.user.id, ballot);
     }
   });
 
-  collector.on("end", async (interaction) => {
+  pollSelectionCollector.on("end", async (interaction) => {
     console.log("Poll Listener: Ended");
-    if (ballots.length === 0) {
+    if (ballots.size === 0) {
       console.log("No Votes");
       return;
     }
 
-    ballots.forEach((ballot) => console.log(ballot.username + ballot.primarySelection))
     let electedName = tally(ballots)
     let submissionSelection = submissionArray.filter(
       (submission) => submission.value === electedName
@@ -123,12 +100,12 @@ export async function activatePollListener(
          try{
           messages.forEach((message) => {
             Archive.create({
-            _id: message.id, //.id
-            votes: message.votes,
-            content: message.content, // .content
-            sender: message.id, // .username
+              _id: message.id, //.id
+              votes: message.votes,
+              content: message.content, // .content
+              sender: message.id, // .username
           }).then(function (){
-            Message.deleteMany().where("votes").gte(0)
+              Message.deleteMany().where("votes").gte(0)
            })
         });
          }
