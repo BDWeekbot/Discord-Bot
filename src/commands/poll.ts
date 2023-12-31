@@ -6,17 +6,21 @@ import { get } from "http";
 
 async function getPollOptions(){
   let pollOptions = new Array()
-  await Message.find()
+
+  try{
+    console.log("getPollOptions")
+    await Message.find()
       .where("votes")
-      .gte(1)
+      .gte(0)
       .then(function (messages) {
           messages.forEach((message) => {
-              pollOptions.push({
-                  label: message.content,
-                  value: message.id,
-              });
+              pollOptions.push(message);
           });
       });
+  } catch(err){
+    console.log(err)
+  }
+
   return pollOptions;
 }
 
@@ -26,12 +30,13 @@ export default{
   .setDescription("Starts the community poll to change the guilds name"),
   async execute(interaction: ChatInputCommandInteraction, client: Client){
       let date: Date = new Date()
+      
       let pollOptions = await getPollOptions()
     
       if (date.getDay() === 0 ||date.getDay() === 1 || date.getDay() === 6){
           console.log("poll")
           await interaction.channel?.send('Starting the 39\' 3/4\" Poll')
-          await interaction.channel?.send('@everyone The Poll will be open for 24 hours')
+          await interaction.channel?.send('The Poll will be open for 24 hours')
           changeServerName(interaction, client, pollOptions)
       }
 

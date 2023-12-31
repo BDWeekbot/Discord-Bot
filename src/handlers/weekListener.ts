@@ -3,16 +3,17 @@ import  {filterRepeatContent}  from "../functions/messages/newMessage.js";
 import { Message as messageObj } from "../utils/models.js";
 
 export function WeekListener(client: Client) {
+
   client.on("messageCreate", async (message: Message | PartialMessage) => {
     const channel : GuildTextBasedChannel = client.channels.cache.get(`${message.channelId}`) as GuildTextBasedChannel;
-   
+    console.log("Message Create")
     if (!message.author || message.author.bot) {
       return;
     }
     const msgArrayType : string | null = message.content
     const msgArray: string[] = msgArrayType!.split(" ");
-
-    console.log(msgArray)
+    console.log(channel.name)
+    console.log("msg array " + msgArray)
     if (
       channel.name === "week-name" &&
       (msgArray[msgArray.length - 1].toLowerCase() === "week" ||
@@ -27,6 +28,7 @@ export function WeekListener(client: Client) {
   });
 
   client.on("messageReactionAdd", async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => {
+    console.log("Message Reaction Add")
     if (reaction.partial) {
       try {
         await reaction.fetch();
@@ -42,28 +44,36 @@ export function WeekListener(client: Client) {
         const message = await messageObj.findOne({
           _id: reaction.message.id,
         });
-        if (message) {
-          message.votes += 1;
-          await message.save();
-          console.log("message.votes ", message.votes);
-
-          if (message.votes === 3) {
-            const msg = await messageObj.findOne({
-              _id: message._id,
-            });
-            if (msg) {
-              msg.votes = message.votes;
-              await msg.save();
-              console.log("msg.votes ", msg.votes);
-              reaction.message.channel.send(
-                `Congratulations ${message.content} has been added to the poll!`
-              );
+        console.log("message ", message)
+        try{
+          if (message) {
+            message.votes += 1;
+            await message.save();
+            console.log("message.votes ", message.votes);
+  
+            if (message.votes === 1) {
+              const msg = await messageObj.findOne({
+                _id: message._id,
+              });
+              if (msg) {
+                msg.votes = message.votes;
+                await msg.save();
+                console.log("msg.votes ", msg.votes);
+                reaction.message.channel.send(
+                  `Congratulations ${message.content} has been added to the poll!`
+                );
+              }
             }
           }
+
+        } catch(err){
+          console.log(err)
         }
+       
       }
     }
   )
+ 
 }
 
 

@@ -30,7 +30,8 @@ export interface submission {
   value: string;
 }
 
-
+// not let poll be called if active
+// 100 character limit in week names
 
 export async function changeServerName(
   commandInteraction: ChatInputCommandInteraction,
@@ -39,10 +40,16 @@ export async function changeServerName(
 ) {
   const guildId = commandInteraction.guildId as string;
   const channelId = commandInteraction.channelId as string;
-
+ 
   const channel = client.channels.cache.get(`${channelId}`) as TextChannel;
+  console.log(pollOptions)
+  const weekNames =  Array.from(pollOptions, (message) => 
+  { 
+  
+    return { label: message.content, value: message.id } })
 
-  const weekNames = Array.from(pollOptions, (message) => { return { label: message.content, value: message.id } })
+  console.log("week names ")
+ 
   const ballotBox = new Array<any>();
 
   const primarySelect: StringSelectMenuBuilder = new StringSelectMenuBuilder()
@@ -70,11 +77,12 @@ export async function changeServerName(
   const tertiaryActionRow =   new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(tertiarySelect)
   const submitButtonRow =     new ActionRowBuilder<ButtonBuilder>().addComponents(submitButton);
 
-  ballotBox.push({primaryActionRow, secondaryActionRow, tertiaryActionRow, submitButtonRow})
+  ballotBox.push(primaryActionRow, secondaryActionRow, tertiaryActionRow, submitButtonRow)
+
 
   const buttonCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.Button,
-    time: 86400000,
+    time: 8640,
   });
 
   activatePollListener(
@@ -93,8 +101,9 @@ export async function changeServerName(
 
   buttonCollector.on("end", async (buttonInteraction: ButtonInteraction) => {
     console.log("button collector end");
-    ballotBox.forEach((component) => {
-      component.setDisabled(true);
+    
+    ballotBox.forEach((component ) => {
+      component.components[0].setDisabled(true);
     });
     console.log("command interaction reply edit");
     commandInteraction.editReply({
@@ -106,6 +115,6 @@ export async function changeServerName(
   commandInteraction.reply({
     content:
       " Please make a selection for the Week Name Poll",
-    components: ballotBox,
+    components: ballotBox
   });
 }
