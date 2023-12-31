@@ -76,7 +76,7 @@ export async function changeServerName(
   buttonCollector.on(
     "collect",
     async (buttonInteraction: ButtonInteraction) => {
-      buttonInteraction.reply({ ephemeral: true, content: "Thank you for your submission" })
+      buttonInteraction.reply({ ephemeral: true, content: "Thank you for your submission." })
     }
   );
 
