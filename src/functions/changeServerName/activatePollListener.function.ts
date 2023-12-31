@@ -16,30 +16,26 @@ export interface Ballot {
   tertiarySelection: string,
 }
 
-// Runs an instant-runoff ranked choice vote on the ballots and returns the winner
 export function tally(ballots: Map<string, Ballot>) {
-  let options = new Map<string, number>();
+  let tally = new Map<string, number>();
   ballots.forEach((ballot) => {
-    if (options.has(ballot.primarySelection)) {
-      options.set(ballot.primarySelection, options.get(ballot.primarySelection)! + 1);
-    } else {
-      options.set(ballot.primarySelection, 1);
-    }
+    tally.set(ballot.primarySelection, (tally.get(ballot.primarySelection) || 0) + 3);
+    tally.set(ballot.secondarySelection, (tally.get(ballot.secondarySelection) || 0) + 2);
+    tally.set(ballot.tertiarySelection, (tally.get(ballot.tertiarySelection) || 0) + 1);
   });
 
   let maxVotes = 0;
-  let maxOption = "";
-  options.forEach((votes, option) => {
+  let maxVoteOption = "";
+  tally.forEach((votes, option) => {
     if (votes > maxVotes) {
       maxVotes = votes;
-      maxOption = option;
+      maxVoteOption = option;
     }
   });
-
-  return maxOption;
+  return maxVoteOption;
 }
 
-export async function activatePollListener(
+ export async function activatePollListener(
   client: Client,
   guildId: String,
   channelId: String,
