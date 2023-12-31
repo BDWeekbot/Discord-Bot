@@ -62,7 +62,7 @@ export async function activatePollListener(
 
   const collector = channel.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
-    time: 30000,
+    time: 864000,
   });
 
   collector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
