@@ -12,7 +12,6 @@ async function createNewMessage(message: Message | PartialMessage) {
       content: message.content, // .content
       sender: message.author?.id, // .username
     });
-    console.log("message created")
     message.channel.send(
       `${message.content}, huh? Good Choice! After your post reaches 3 upvotes, I'll add it to next weeks poll! `
     );

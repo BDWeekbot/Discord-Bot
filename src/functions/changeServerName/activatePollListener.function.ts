@@ -5,8 +5,8 @@ import {
   ComponentType,
   StringSelectMenuInteraction,
 } from "discord.js";
-import { Archive, Message } from "../../utils/models";
-import { submission } from "./changeServerName";
+import { Archive, Message } from "../../utils/models.js";
+import { submission } from "./changeServerName.js";
 
 export interface Ballot {
   userID: string;

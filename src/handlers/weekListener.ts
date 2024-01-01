@@ -6,29 +6,25 @@ export function WeekListener(client: Client) {
 
   client.on("messageCreate", async (message: Message | PartialMessage) => {
     const channel : GuildTextBasedChannel = client.channels.cache.get(`${message.channelId}`) as GuildTextBasedChannel;
-    console.log("Message Create")
     if (!message.author || message.author.bot) {
       return;
     }
     const msgArrayType : string | null = message.content
     const msgArray: string[] = msgArrayType!.split(" ");
-    console.log(channel.name)
-    console.log("msg array " + msgArray)
     if (
       channel.name === "week-name" &&
       (msgArray[msgArray.length - 1].toLowerCase() === "week" ||
         msgArray[msgArray.length - 1].toLowerCase() === "week.")
     ) {
       filterRepeatContent(message);
-      console.log("message.content ", message.content);
+      console.log("New Week Submitted: " + message.content + " by " + message.author.username);
     } else {
-      
       console.log("return trigger - message creation");
     }
   });
 
   client.on("messageReactionAdd", async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => {
-    console.log("Message Reaction Add")
+    console.log("Vote Added for " + reaction.message + " by " + user.username);
     if (reaction.partial) {
       try {
         await reaction.fetch();
