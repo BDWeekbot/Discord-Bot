@@ -51,7 +51,7 @@ export function tally(ballots: Map<string, Ballot>) {
 
   const pollSelectionCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
-    time: 86400,
+    time: 1_800_000,
   });
 
   pollSelectionCollector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
@@ -93,7 +93,7 @@ export function tally(ballots: Map<string, Ballot>) {
 
     await Message.find()
       .where("votes")
-      .gte(1)
+      .gte(3)
       .then(function (messages) {
         try {
           messages.forEach(async (message) => {

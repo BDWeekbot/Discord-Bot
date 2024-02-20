@@ -10,7 +10,7 @@ async function getPollOptions() {
     console.log("getPollOptions")
     await Message.find()
       .where("votes")
-      .gte(0)
+      .gte(3)
       .then(function (messages) {
         messages.forEach((message) => {
           pollOptions.push(message);

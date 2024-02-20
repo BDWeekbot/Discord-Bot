@@ -63,7 +63,7 @@ export async function changeServerName(
 
   const buttonCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.Button,
-    time: 86400,
+    time: 1_800_000,
   });
 
   await activatePollListener(
