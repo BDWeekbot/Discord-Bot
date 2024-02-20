@@ -48,7 +48,7 @@ export function WeekListener(client: Client) {
             await message.save();
             console.log("message.votes ", message.votes);
   
-            if (message.votes === 1) {
+            if (message.votes === 3) {
               const msg = await messageObj.findOne({
                 _id: message._id,
               });
