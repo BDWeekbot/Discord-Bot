@@ -1,5 +1,5 @@
-import { Ballot } from './activatePollListener.function';
-import { tally } from './activatePollListener.function';
+import { Ballot } from './activatePollListener.function.js'
+import { tally } from './activatePollListener.function.js';
 
 describe('tally', () => {
     it('should return the only option if there is only one option', () => {

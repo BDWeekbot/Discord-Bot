@@ -96,7 +96,11 @@ export function tally(ballots: Map<string, Ballot>) {
       .gte(1)
       .then(function (messages) {
         try {
-          messages.forEach((message) => {
+          messages.forEach(async (message) => {
+            if(await Archive.countDocuments({ _id: message.id }) > 0){
+              return
+            }
+
             Archive.create({
               _id: message.id, //.id
               votes: message.votes,

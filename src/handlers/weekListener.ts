@@ -1,4 +1,4 @@
-import { Message, PartialMessage, MessageReaction, User, Client, Events, PartialMessageReaction, PartialUser, GuildTextBasedChannel} from "discord.js";
+import { Message, PartialMessage, MessageReaction, User, Client, Events, PartialMessageReaction, PartialUser, GuildTextBasedChannel, TextChannel} from "discord.js";
 import  {filterRepeatContent}  from "../functions/messages/newMessage.js";
 import { Message as messageObj } from "../utils/models.js";
 
@@ -33,7 +33,8 @@ export function WeekListener(client: Client) {
         return;
       }
     }
-    if (reaction.message.channel.id === "week-name"
+
+    if ((reaction.message.channel as TextChannel).name === "week-name"
      && reaction.emoji.name === "bd"
      && !reaction.message.author?.bot) {
        //👍

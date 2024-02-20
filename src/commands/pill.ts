@@ -4,47 +4,42 @@ import { Message } from "../utils/models.js";
 import { get } from "http";
 
 
-async function getPollOptions(){
+
+async function getPollOptions() {
   let pollOptions = new Array()
 
-  try{
+  try {
     console.log("getPollOptions")
     await Message.find()
       .where("votes")
-      .gte(1)
+      .gte(0)
       .then(function (messages) {
-          messages.forEach((message) => {
-              pollOptions.push({
-                  label: message.content,
-                  value: message.id,
-              });
-          });
+        messages.forEach((message) => {
+          pollOptions.push(message);
+        });
       });
-  } catch(err){
+  } catch (err) {
     console.log(err)
   }
-  console.log(pollOptions)
+
   return pollOptions;
 }
 
-export default{
+export default {
   data: new SlashCommandBuilder()
-  .setName("poll")
-  .setDescription("Starts the community poll to change the guilds name"),
-  async execute(interaction: ChatInputCommandInteraction, client: Client){
-      let date: Date = new Date()
-      
-      let pollOptions = await getPollOptions()
-    
-      if (date.getDay() === 0 ||date.getDay() === 1 || date.getDay() === 6){
-          console.log("poll")
-          await interaction.channel?.send('Starting the 39\' 3/4\" Poll')
-          await interaction.channel?.send('@everyone The Poll will be open for 24 hours')
-          changeServerName(interaction, client, pollOptions)
-      }
+    .setName("pill")
+    .setDescription("Starts the community poll to change the guilds name"),
+  async execute(interaction: ChatInputCommandInteraction, client: Client) {
+    let date: Date = new Date()
+    let pollOptions = await getPollOptions()
 
-      else{
-          interaction.reply('Sorry, the poll is only open on Sundays, Mondays, and Thursdays')
-      }
+    if (date.getDay() === 0 || date.getDay() === 1 || date.getDay() === 2) {
+      console.log("poll")
+      await interaction.channel?.send('Starting the 39 \' 3/4\" Poll')
+      await interaction.channel?.send('The Poll will be open for 24 hours')
+      changeServerName(interaction, client, pollOptions)
+    } else {
+      interaction.reply('Sorry, the poll is only open on Sundays, Mondays, and Thursdays')
+    }
   }
 }
