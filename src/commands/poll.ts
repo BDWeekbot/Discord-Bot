@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Client } from "discord.js";
 import { changeServerName } from "../functions/changeServerName/changeServerName.js";
 import { Message } from "../utils/models.js";
+import { POLL_THRESHOLD } from "../utils/constants.js";
 
 
 async function getPollOptions() {
@@ -10,7 +11,7 @@ async function getPollOptions() {
     console.log("getPollOptions")
     await Message.find()
       .where("votes")
-      .gte(3)
+      .gte(POLL_THRESHOLD)
       .then(function (messages) {
         messages.forEach((message) => {
           pollOptions.push(message);

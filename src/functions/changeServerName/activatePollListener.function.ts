@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { Archive, Message } from "../../utils/models.js";
 import { submission } from "./changeServerName.js";
+import { POLL_DURATION, POLL_THRESHOLD } from "../../utils/constants.js";
 
 export interface Ballot {
   userID: string;
@@ -51,7 +52,7 @@ export function tally(ballots: Map<string, Ballot>) {
 
   const pollSelectionCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.StringSelect,
-    time: 1_800_000,
+    time: POLL_DURATION,
   });
 
   pollSelectionCollector.on("collect", (selectInteraction: StringSelectMenuInteraction) => {
@@ -93,7 +94,7 @@ export function tally(ballots: Map<string, Ballot>) {
 
     await Message.find()
       .where("votes")
-      .gte(3)
+      .gte(POLL_THRESHOLD)
       .then(function (messages) {
         try {
           messages.forEach(async (message) => {

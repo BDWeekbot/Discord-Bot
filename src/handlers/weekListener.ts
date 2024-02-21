@@ -1,6 +1,7 @@
 import { Message, PartialMessage, MessageReaction, User, Client, Events, PartialMessageReaction, PartialUser, GuildTextBasedChannel, TextChannel} from "discord.js";
 import  {filterRepeatContent}  from "../functions/messages/newMessage.js";
 import { Message as messageObj } from "../utils/models.js";
+import { POLL_EMOTE, VOTE_THRESHOLD } from "../utils/constants.js";
 
 export function WeekListener(client: Client) {
 
@@ -35,7 +36,7 @@ export function WeekListener(client: Client) {
     }
 
     if ((reaction.message.channel as TextChannel).name === "week-name"
-     && reaction.emoji.name === "bd"
+     && reaction.emoji.name === POLL_EMOTE
      && !reaction.message.author?.bot) {
        //👍
         const message = await messageObj.findOne({
@@ -48,7 +49,7 @@ export function WeekListener(client: Client) {
             await message.save();
             console.log("message.votes ", message.votes);
   
-            if (message.votes === 3) {
+            if (message.votes === VOTE_THRESHOLD) {
               const msg = await messageObj.findOne({
                 _id: message._id,
               });

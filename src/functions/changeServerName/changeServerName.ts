@@ -11,6 +11,7 @@ import {
   ButtonInteraction,
 } from "discord.js";
 import { activatePollListener } from "./activatePollListener.function.js";
+import { POLL_DURATION } from "../../utils/constants.js";
 
 export interface submission {
   label: string;
@@ -63,7 +64,7 @@ export async function changeServerName(
 
   const buttonCollector = channel.createMessageComponentCollector({
     componentType: ComponentType.Button,
-    time: 1_800_000,
+    time: POLL_DURATION,
   });
 
   await activatePollListener(
