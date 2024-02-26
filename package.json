@@ -11,12 +11,13 @@
     "build": "tsc",
     "deploy-command": "nodemon --config nodemon.json src/setCommands.ts",
     "dc-live": "node dist/setCommands.js",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@jest/transform": "^29.7.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.6.3",
     "discord.js": "^14.13.0",
