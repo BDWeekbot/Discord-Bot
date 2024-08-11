@@ -14,3 +14,8 @@ services = []
   cmd = []
   entrypoint = []
   exec = []
+
+[mounts]
+  source = "litefs"
+  destination = "/var/lib/litefs"
+
