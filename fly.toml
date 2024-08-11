@@ -11,7 +11,6 @@ services = []
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  cmd = []
   entrypoint = []
   exec = []
 
