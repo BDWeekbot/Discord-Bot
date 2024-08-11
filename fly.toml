@@ -11,11 +11,14 @@ services = []
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  cmd = []
+  cmd = ["./main"]
   entrypoint = []
   exec = []
 
 [mounts]
   source = "litefs"
   destination = "/var/lib/litefs"
+
+[build]
+  dockerfile = "Dockerfile"
 
