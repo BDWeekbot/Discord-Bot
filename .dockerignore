@@ -1,0 +1,6 @@
+# .dockerignore
+node_modules
+weekbot-js
+.git
+Dockerfile
+.dockerignore
