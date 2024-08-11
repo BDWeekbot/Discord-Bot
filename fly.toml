@@ -12,7 +12,7 @@ services = []
   allowed_public_ports = []
   auto_rollback = true
   entrypoint = []
-  exec = []
+  exec = ["litefs", "mount", "./main"]
 
 [mounts]
   source = "litefs"
