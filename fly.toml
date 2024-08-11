@@ -11,8 +11,8 @@ services = []
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  entrypoint = []
-  exec = ["litefs", "mount", "./main"]
+  entrypoint = ["litefs"]
+  exec = ["mount", "./main"]
 
 [mounts]
   source = "litefs"
