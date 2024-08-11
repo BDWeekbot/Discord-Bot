@@ -1,7 +1,7 @@
 import { Message as Msg, Archive, IMessage} from "../../utils/models.js";
 import { Message, PartialMessage } from "discord.js";
 
-async function createNewMessage(message: Message | PartialMessage) {
+export async function createNewMessage(message: Message | PartialMessage) {
   // update store with poll array
 
   try {
