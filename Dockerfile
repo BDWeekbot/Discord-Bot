@@ -17,7 +17,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-ENV CGO_ENABLED=1
+
 RUN go build -o main ./cmd
 
 # Install necessary packages
@@ -30,7 +30,7 @@ COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 ENTRYPOINT ["litefs", "mount"]
 
 # Expose port 3000 to the outside world
-EXPOSE 3000
+EXPOSE 8080
 
 # Command to run the application
 CMD ["./main"]
