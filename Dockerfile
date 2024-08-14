@@ -17,6 +17,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
+ENV CGO_ENABLED=1
 RUN go build -o main ./cmd
 
 # Install necessary packages
