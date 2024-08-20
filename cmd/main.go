@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	api.Gin()
+
 	config := services.GetConfig()
 
 	discordService, err := discord.NewDiscordService(config.DiscordToken)
@@ -43,6 +43,7 @@ func main() {
 			return
 		}
 	}
+	api.Gin(discordService)
 
 	// Setup an interrupt listener
 	stop := make(chan os.Signal, 1)
