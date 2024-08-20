@@ -1,8 +1,13 @@
 package api
 
 import (
+	"context"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 	"weekbot-go/internal/services/discord"
 
 	"github.com/gin-contrib/cors"
@@ -24,12 +29,14 @@ func Gin(ds *discord.DiscordService) {
 		AllowCredentials: true,
 	}))
 	r.GET("/ping", func(c *gin.Context) {
+		println("ping request")
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
 	r.GET("/guilds", func(c *gin.Context) {
+		println("guild request")
 		c.JSON(http.StatusOK, gin.H{
 			"message": guilds,
 		})
@@ -42,5 +49,32 @@ func Gin(ds *discord.DiscordService) {
 	if port == "" {
 		port = "3000" // Change to a different port
 	}
-	r.Run(":" + port) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	// Create a server
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: r,
+	}
+
+	// Start the server in a goroutine
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	// Create a context with timeout for the shutdown
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server forced to shutdown:", err)
+	}
+
+	log.Println("Server exiting")
 }
