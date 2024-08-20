@@ -15,6 +15,11 @@ import (
 )
 
 func Gin(ds *discord.DiscordService) {
+	mode := os.Getenv("GIN_MODE")
+	if mode == "" {
+		gin.SetMode(gin.DebugMode)
+	}
+	gin.SetMode(mode)
 	guilds := make(map[string]string)
 	for _, guild := range ds.GetGuilds() {
 		guilds[guild.Name] = guild.ID
