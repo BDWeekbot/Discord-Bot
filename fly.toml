@@ -5,17 +5,21 @@ kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 services = []
+primary_region = "ewr"
 
 [env]
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  cmd = ["litefs", "mount", "./main"]
-  entrypoint = []
+  cmd = ["./main"]
+  entrypoint = ["litefs", "mount", "--"]
   exec = []
 
 [mounts]
   source = "litefs"
   destination = "/var/lib/litefs"
+
+[build]
+  dockerfile = "Dockerfile"
 
