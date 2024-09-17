@@ -1,20 +1,16 @@
-# fly.toml file generated for weekbot on 2022-09-12T19:47:55-04:00
+# fly.toml file generated for weekbot
 
 app = "weekbot"
 kill_signal = "SIGINT"
 kill_timeout = 5
-processes = []
-services = []
 primary_region = "ewr"
 
 [env]
+  PRIMARY_REGION = "ewr"
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
-  cmd = ["./main"]
-  entrypoint = ["litefs", "mount", "--"]
-  exec = []
 
 [mounts]
   source = "litefs"
@@ -23,3 +19,17 @@ primary_region = "ewr"
 [build]
   dockerfile = "Dockerfile"
 
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  processes = ["app"]
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
