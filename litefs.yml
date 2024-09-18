@@ -9,7 +9,7 @@ fuse:
 # mount a volume to the data directory so it can be persisted across restarts.
 # However, this data should not be accessed directly by the user application.
 data:
-  dir: "/var/lib/litefs"
+  dir: "/app//litefs"
 
 # This flag ensure that LiteFS continues to run if there is an issue on starup.
 # It makes it easy to ssh in and debug any issues you might be having rather
