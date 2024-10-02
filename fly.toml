@@ -7,7 +7,6 @@ primary_region = "ewr"
 
 [env]
   PRIMARY_REGION = "ewr"
-  CANDIDATE = true
 
 [experimental]
   allowed_public_ports = []
