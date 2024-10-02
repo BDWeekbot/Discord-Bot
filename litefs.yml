@@ -1,8 +1,8 @@
 fuse:
-  dir: "/app/data/sqlite"
+  dir: "/var/lib/litefs"
 
 data:
-  dir: "/app/lib/litefs"
+  dir: "/var/lib/litefs"
 
 exit-on-error: false
 
