@@ -28,13 +28,13 @@ RUN apk add --no-cache ca-certificates fuse3 sqlite
 COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 
 # Set the entrypoint to litefs mount
-ENTRYPOINT ["litefs", "mount"]
+ENTRYPOINT ["litefs", "mount", "--", "./main"]
 
 # Expose port 3000 to the outside world
 EXPOSE 3000
 
 # Command to run the application
-CMD ["./main"]
+
 
 # Use the official Golang image as the base image
 # FROM golang:1.22.0-alpine
