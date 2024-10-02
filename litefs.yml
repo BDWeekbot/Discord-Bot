@@ -4,7 +4,7 @@ fuse:
 
 
 data:
-  dir: "/app/data/litefs"
+  dir: "/app/lib/litefs"
 
 exit-on-error: false
 
@@ -23,7 +23,7 @@ exec:
 lease:
   type: "consul"
   advertise-url: "http://${HOSTNAME}.vm.${FLY_APP_NAME}.internal:20202"
-  candidate: ${FLY_REGION == PRIMARY_REGION}
+  candidate: ${FLY_REGION} == "${PRIMARY_REGION}"
   promote: true
 
   consul:
