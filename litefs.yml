@@ -1,7 +1,5 @@
-
 fuse:
   dir: "/app/data/sqlite"
-
 
 data:
   dir: "/app/lib/litefs"
@@ -15,7 +13,6 @@ proxy:
   passthrough: 
     - "*.ico"
     - "*.png"
-
 
 exec:
   - cmd: "./main"

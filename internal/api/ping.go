@@ -17,9 +17,10 @@ import (
 func Gin(ds *discord.DiscordService) {
 	mode := os.Getenv("GIN_MODE")
 	if mode == "" {
-		gin.SetMode(gin.DebugMode)
+		mode = gin.DebugMode
 	}
 	gin.SetMode(mode)
+
 	guilds := make(map[string]string)
 	for _, guild := range ds.GetGuilds() {
 		guilds[guild.Name] = guild.ID
@@ -46,17 +47,19 @@ func Gin(ds *discord.DiscordService) {
 			"message": guilds,
 		})
 	})
+
 	// Set the trusted proxies
 	r.SetTrustedProxies([]string{"127.0.0.1"})
 
 	// Use environment variable for port
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000" // Change to a different port
+		port = "8080" // Change to the expected port
 	}
+
 	// Create a server
 	srv := &http.Server{
-		Addr:    ":" + port,
+		Addr:    "0.0.0.0:" + port, // Ensure the server listens on 0.0.0.0
 		Handler: r,
 	}
 
