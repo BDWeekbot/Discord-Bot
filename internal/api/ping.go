@@ -54,7 +54,7 @@ func Gin(ds *discord.DiscordService) {
 	// Use environment variable for port
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000" // Change to the expected port
+		port = "8080" // Change to the expected port
 	}
 
 	// Create a server
