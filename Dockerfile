@@ -28,8 +28,6 @@ RUN apk add --no-cache ca-certificates fuse3 sqlite
 COPY --from=flyio/litefs:0.5 /usr/local/bin/litefs /usr/local/bin/litefs
 
 
-ENTRYPOINT ["litefs", "mount"]
-
 EXPOSE 3000
 
-CMD ["./main"]
+CMD ["litefs", "mount"]

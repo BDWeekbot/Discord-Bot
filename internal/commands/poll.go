@@ -1,8 +1,10 @@
 package commands
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 	"weekbot-go/internal/models"
 
@@ -358,4 +360,83 @@ func EndPollCommand() *discordgo.ApplicationCommand {
 		Type:        discordgo.ChatApplicationCommand,
 	}
 	return pollCommand
+}
+
+// HandleCurrentPollOptions handles the /currentpolloptions command
+func HandleCurrentPollOptions(s *discordgo.Session, m *discordgo.InteractionCreate) {
+	bot := models.GetBot(m.GuildID)
+	if bot == nil {
+		s.InteractionRespond(m.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Error: Bot not found for this guild",
+				Flags:   discordgo.MessageFlagsEphemeral,
+			},
+		})
+		return
+	}
+
+	// Get all unused suggestions with 3+ updicks (same criteria as poll creation)
+	suggestions := models.GetMostRecentUnusedSuggestions(bot.DB)
+
+	if len(suggestions) == 0 {
+		s.InteractionRespond(m.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "No suggestions are currently available for polling. Suggestions need at least 3 updicks to be eligible.",
+				Flags:   discordgo.MessageFlagsEphemeral,
+			},
+		})
+		return
+	}
+
+	// Remove duplicates (same logic as in Poll.GetSelectOptions)
+	var filteredSuggestions []models.Suggestion
+	for _, suggestion := range suggestions {
+		isDuplicate := false
+		for _, filtered := range filteredSuggestions {
+			if strings.EqualFold(suggestion.Content, filtered.Content) {
+				isDuplicate = true
+				break
+			}
+		}
+		if !isDuplicate && suggestion.Updicks >= 3 {
+			filteredSuggestions = append(filteredSuggestions, suggestion)
+		}
+	}
+
+	// Build the response message
+	var responseBuilder strings.Builder
+	responseBuilder.WriteString("**Current Poll Options Available:**\n")
+	responseBuilder.WriteString(fmt.Sprintf("Found %d eligible suggestions:\n\n", len(filteredSuggestions)))
+
+	for i, suggestion := range filteredSuggestions {
+		responseBuilder.WriteString(fmt.Sprintf("%d. **%s** (👍 %d updicks)\n",
+			i+1, suggestion.Content, suggestion.Updicks))
+	}
+
+	responseBuilder.WriteString("\n*Suggestions need at least 3 updicks to be eligible for polls.*")
+
+	if len(filteredSuggestions) >= 3 {
+		responseBuilder.WriteString("\n✅ **Ready to start a poll!**")
+	} else {
+		responseBuilder.WriteString(fmt.Sprintf("\n⚠️ **Need %d more suggestions to start a poll.**", 3-len(filteredSuggestions)))
+	}
+
+	s.InteractionRespond(m.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: responseBuilder.String(),
+			Flags:   discordgo.MessageFlagsEphemeral,
+		},
+	})
+}
+
+// GetCurrentPollOptionsCommand returns the command definition for currentpolloptions
+func GetCurrentPollOptionsCommand() *discordgo.ApplicationCommand {
+	return &discordgo.ApplicationCommand{
+		Name:        "currentpolloptions",
+		Description: "List all suggestions currently eligible for polling",
+		Type:        discordgo.ChatApplicationCommand,
+	}
 }

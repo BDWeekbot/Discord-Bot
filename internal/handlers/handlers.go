@@ -27,6 +27,8 @@ func ParseInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			commands.HandleWeekPoll(s, i)
 		case "endpoll":
 			commands.HandleEndPoll(s, i)
+		case "currentpolloptions":
+			commands.HandleCurrentPollOptions(s, i)
 		default:
 			fmt.Println("Unknown command:", i.ApplicationCommandData().Name)
 		}
