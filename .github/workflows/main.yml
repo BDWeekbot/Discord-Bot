@@ -23,4 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: Make deploy script executable
+        run: chmod +x deploy.sh
+      - name: Deploy with automated Consul key versioning
+        run: ./deploy.sh
