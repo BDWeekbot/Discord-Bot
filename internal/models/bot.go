@@ -50,4 +50,5 @@ func configureSchema(db *gorm.DB) {
 	db.AutoMigrate(&Poll{})
 	db.AutoMigrate(&Voter{})
 	db.AutoMigrate(&Ballot{})
+	db.AutoMigrate(&GuildSettings{})
 }

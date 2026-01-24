@@ -29,6 +29,8 @@ func ParseInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			commands.HandleEndPoll(s, i)
 		case "currentpolloptions":
 			commands.HandleCurrentPollOptions(s, i)
+		case "config":
+			commands.HandleConfigCommand(s, i)
 		default:
 			fmt.Println("Unknown command:", i.ApplicationCommandData().Name)
 		}
@@ -75,10 +77,21 @@ func HandleReactions(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 		return
 	}
 
-	println(r.Emoji.Name)
-	if r.Emoji.Name == "bd" && len(reaction) >= 3 { // bd 👍
+	settings := models.GetGuildSettings(bot.DB, r.GuildID)
+	if settings == nil {
+		fmt.Println("Error getting guild settings")
+		return
+	}
 
+	fmt.Printf("Reaction check: emoji='%s', expected='%s', count=%d, threshold=%d\n",
+		r.Emoji.Name, settings.ReactionEmoji, len(reaction), settings.UpdickThreshold)
+	if r.Emoji.Name == settings.ReactionEmoji && len(reaction) >= settings.UpdickThreshold {
 		models.UpdateSuggestion(bot.DB, m.Content, r.GuildID, len(reaction))
-		s.MessageReactionAdd(r.ChannelID, r.MessageID, "👍")
+		err = s.MessageReactionAdd(r.ChannelID, r.MessageID, "👍")
+		if err != nil {
+			fmt.Println("Error adding thumbsup reaction:", err)
+		} else {
+			fmt.Println("Added thumbsup reaction to message:", r.MessageID)
+		}
 	}
 }

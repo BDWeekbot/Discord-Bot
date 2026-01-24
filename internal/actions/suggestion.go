@@ -19,13 +19,18 @@ func HandleWeekSuggestion(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	suggestion := m.Content
+	suggestionContent := m.Content
 	// Create a new suggestion from the message
 	bot := models.GetBot(m.GuildID)
-	models.NewSuggestion(bot.DB, suggestion, bot.GuildID)
+	suggestion := models.NewSuggestion(bot.DB, suggestionContent, bot.GuildID)
 
-	fmt.Println("Adding suggestion:", suggestion)
-	s.ChannelMessageSend(m.ChannelID, "Week suggestion added: "+m.Content+". Weekbot will add a 👍 when this suggestion has enough votes to be added to the next poll.")
+	if suggestion == nil {
+		fmt.Println("Suggestion rejected (empty or invalid):", suggestionContent)
+		return
+	}
+
+	fmt.Println("Adding suggestion:", suggestion.Content)
+	s.ChannelMessageSend(m.ChannelID, "Week suggestion added: "+suggestion.Content+". Weekbot will add a 👍 when this suggestion has enough votes to be added to the next poll.")
 	list, err := db.GetAllSuggestions(m.GuildID)
 	if err != nil {
 		fmt.Println(err)

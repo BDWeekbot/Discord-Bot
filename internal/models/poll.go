@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
 
@@ -28,7 +27,7 @@ func NewOrCurrentPoll(bot *Bot) *Poll {
 		return poll
 	}
 
-	suggestions := GetMostRecentUnusedSuggestions(bot.DB)
+	suggestions := GetMostRecentUnusedSuggestionsForGuild(bot.DB, bot.GuildID)
 	println("Suggestions found", len(suggestions))
 	if len(suggestions) < 3 {
 		fmt.Println("Not enough suggestions to start poll")
@@ -61,9 +60,15 @@ func (p *Poll) GetSelectOptions() []discordgo.SelectMenuOption {
 	var options []discordgo.SelectMenuOption
 	var filter []Suggestion
 	for _, suggestion := range p.Suggestions {
+		// Skip suggestions with empty or invalid content (Discord requires 1-100 chars)
+		content := strings.TrimSpace(suggestion.Content)
+		if content == "" || len(content) > 100 {
+			continue
+		}
+
 		isDuplicate := false
 		for _, f := range filter {
-			if strings.EqualFold(suggestion.Content, f.Content) {
+			if strings.EqualFold(content, f.Content) {
 				isDuplicate = true
 				break
 			}
@@ -122,15 +127,18 @@ func (p *Poll) GetBallots() []Ballot {
 
 // AddBallot adds a ballot to the poll
 func (p *Poll) AddBallotToPoll(bot *Bot, ballot Ballot) {
+	found := false
 	for index, b := range p.Ballots {
 		if b.VoterId == ballot.VoterId {
 			p.Ballots[index] = ballot
+			found = true
 			break
 		}
 	}
-	p.Ballots = append(p.Ballots, ballot)
+	if !found {
+		p.Ballots = append(p.Ballots, ballot)
+	}
 	bot.DB.Save(&p)
-
 }
 
 func (p *Poll) AddBallotForVoter(bot *Bot, ballot Ballot) {
@@ -155,97 +163,79 @@ func (p *Poll) AddBallotForVoter(bot *Bot, ballot Ballot) {
 }
 
 func (p *Poll) PerformRankedChoiceVoting() string {
-	voteCounts := make(map[string]int)
-	totalBallots := len(p.Ballots)
-	totalEligibleBallots := 0
-	// Initialize vote counts for each suggestion
+	// Track which candidates are still active
+	activeCandidates := make(map[string]bool)
 	for _, suggestion := range p.Suggestions {
-		voteCounts[suggestion.Content] = 0
+		activeCandidates[suggestion.Content] = true
 	}
 
-	// First round: count first-choice votes
+	// Count only eligible ballots
+	var eligibleBallots []Ballot
 	for _, ballot := range p.Ballots {
-		if !ballot.Cast {
-			continue
-		}
-		totalEligibleBallots++
-		voteCounts[ballot.FirstChoice]++
-		println("FC", ballot.FirstChoice, voteCounts[ballot.FirstChoice])
-	}
-
-	// Remove suggestions that did not receive any votes in the first round
-	for suggestion, count := range voteCounts {
-		println("SUGGESTION COUNT", suggestion, count)
-	}
-	for suggestion, count := range voteCounts {
-		if count == 0 {
-			println("deleted: " + suggestion)
-			delete(voteCounts, suggestion)
+		if ballot.Cast {
+			eligibleBallots = append(eligibleBallots, ballot)
 		}
 	}
 
-	if totalEligibleBallots < 4 {
-		allOneVote := true
+	totalEligibleBallots := len(eligibleBallots)
+
+	// Perform rounds of voting
+	for len(activeCandidates) > 1 {
+		// Count current round votes
+		voteCounts := make(map[string]int)
+		for candidate := range activeCandidates {
+			voteCounts[candidate] = 0
+		}
+
+		// Count votes based on current active preferences
+		for _, ballot := range eligibleBallots {
+			currentChoice := p.getCurrentChoice(ballot, activeCandidates)
+			if currentChoice != "" {
+				voteCounts[currentChoice]++
+			}
+		}
+
+		// Check for majority (more than 50%)
+		for candidate, count := range voteCounts {
+			if count > totalEligibleBallots/2 {
+				return candidate
+			}
+		}
+
+		// Find candidate(s) with fewest votes to eliminate
+		minVotes := totalEligibleBallots + 1
 		for _, count := range voteCounts {
-			if count != 1 {
-				allOneVote = false
+			if count < minVotes {
+				minVotes = count
+			}
+		}
+
+		// Eliminate candidate with fewest votes (tie-breaking: first found)
+		for candidate, count := range voteCounts {
+			if count == minVotes {
+				delete(activeCandidates, candidate)
 				break
 			}
 		}
-		if allOneVote {
-			// Collect all suggestions with one vote
-			var oneVoteSuggestions []string
-			for suggestion, count := range voteCounts {
-				if count == 1 {
-					oneVoteSuggestions = append(oneVoteSuggestions, suggestion)
-				}
-			}
-			// Randomly select a winner from the suggestions with one vote
-			return oneVoteSuggestions[rand.Intn(len(oneVoteSuggestions))]
-		}
 	}
 
-	// Check for majority
-	for {
-		// Find the suggestion with the highest votes
-		var maxVotes int
-		var maxSuggestion string
-		for suggestion, count := range voteCounts {
-			if count > maxVotes {
-				maxVotes = count
-				maxSuggestion = suggestion
-			}
-		}
+	// Return the last remaining candidate
+	for candidate := range activeCandidates {
+		return candidate
+	}
 
-		// Check if the suggestion has more than 50% of the votes
-		if maxVotes > (totalBallots+1)/2 {
-			return maxSuggestion
-		}
+	return ""
+}
 
-		// Find the suggestion with the fewest votes
-		var minVotes int = totalBallots + 1
-		var minSuggestion string
-		for suggestion, count := range voteCounts {
-			if count > 0 && count < minVotes {
-				minVotes = count
-				minSuggestion = suggestion
-			}
-		}
-
-		// Eliminate the suggestion with the fewest votes
-		delete(voteCounts, minSuggestion)
-
-		// Redistribute votes
-		for _, ballot := range p.Ballots {
-			if ballot.FirstChoice == minSuggestion {
-				if voteCounts[ballot.SecondChoice] > 0 {
-					voteCounts[ballot.SecondChoice]++
-				} else if voteCounts[ballot.ThirdChoice] > 0 {
-					voteCounts[ballot.ThirdChoice]++
-				}
-			}
+// getCurrentChoice returns the highest-ranked choice that's still active
+func (p *Poll) getCurrentChoice(ballot Ballot, activeCandidates map[string]bool) string {
+	choices := []string{ballot.FirstChoice, ballot.SecondChoice, ballot.ThirdChoice}
+	for _, choice := range choices {
+		if choice != "" && activeCandidates[choice] {
+			return choice
 		}
 	}
+	return "" // Exhausted ballot
 }
 
 // EndPoll ends the poll
@@ -253,8 +243,4 @@ func (p *Poll) EndPoll() {
 	println("Ending poll")
 	p.InProgress = false
 	p.IsComplete = true
-
-	for _, suggestion := range p.Suggestions {
-		suggestion.Used = true
-	}
 }
