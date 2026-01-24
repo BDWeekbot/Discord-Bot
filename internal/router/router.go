@@ -10,6 +10,7 @@ func ConfigureHandlers(dsc *discord.DiscordService) *discord.DiscordService {
 	dsc.AddHandler(handlers.ParseInteraction)
 	dsc.AddHandler(handlers.ParseChatCommand)
 	dsc.AddHandler(handlers.HandleReactions)
+	dsc.AddHandler(handlers.HandlePollInteractions)
 	return dsc
 }
 
@@ -19,6 +20,7 @@ func SetCommands(dsc *discord.DiscordService, guildId string) *discord.DiscordSe
 	dsc.AddSlashCommand(commands.GetPollCommand(), guildId)
 	dsc.AddSlashCommand(commands.EndPollCommand(), guildId)
 	dsc.AddSlashCommand(commands.GetCurrentPollOptionsCommand(), guildId)
+	dsc.AddSlashCommand(commands.GetConfigCommand(), guildId)
 
 	return dsc
 }
